@@ -227,6 +227,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .simlab-sub { font-size: 12.5px; color: #9a9eb0; margin-top: 4px; }
 
 .progress-card { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 14px; padding: 15px 16px; margin-bottom: 16px; }
+
+.accounts-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.account-card { background: linear-gradient(155deg, #1f1f23, #1a1a1d); border: 1px solid #34343a; border-radius: 14px; padding: 16px; position: relative; cursor: pointer; transition: border-color 0.15s; }
+.account-card:hover { border-color: #4a3a5e; }
+.account-card.selected { border-color: #8b5cf6; box-shadow: 0 0 0 1px #8b5cf6, 0 0 18px rgba(139,92,246,0.18); }
+.account-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.account-card-name { font-size: 14.5px; font-weight: 700; color: #f0f1f4; }
+.account-card-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 6px; }
+.account-type-demo { background: #122846; color: #5ea7ff; }
+.account-type-prop { background: #2f2510; color: #ffb547; }
+.account-type-live { background: #261c3a; color: #c79bff; }
+.account-card-balance { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.account-card-meta { font-size: 11px; color: #767a8c; display: flex; justify-content: space-between; gap: 8px; }
+.account-card-meta b { color: #c6c8d6; font-weight: 600; }
+.account-card-fee-note { font-size: 10px; color: #ff9a52; margin-top: 6px; }
+.account-card-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #3e4154; cursor: pointer; font-size: 14px; padding: 2px; }
+.account-card-del:hover { color: #ff6b66; }
+
+.add-account-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 12px; background: #1a1a1d; border: 1px dashed #3e4154; border-radius: 12px; color: #8d90a0; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.12s, color 0.12s; }
+.add-account-btn:hover { border-color: #8b5cf6; color: #d6b8ff; }
+
+.account-detail-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.account-pill { padding: 7px 13px; border-radius: 9px; background: #1a1a1d; border: 1px solid #34343a; color: #8d90a0; font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.account-pill.active { background: linear-gradient(135deg, #4a3a5e, #362a48); color: #f3e8ff; border-color: #8b5cf6; }
+.account-detail-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 20px; }
 .progress-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .progress-count { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
 .progress-count span { font-size: 13px; font-weight: 500; color: #6b6f80; }
@@ -298,8 +323,17 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
         <div class="toggle-switch" id="newsweek-toggle" onclick="toggleNewsWeek()"><div class="toggle-knob"></div></div>
       </div>
 
+  <div class="tab-panel active" id="panel-accounts">
+    <div class="section-label">💼 Your accounts</div>
+    <div class="accounts-grid" id="accounts-grid"></div>
+    <button class="add-account-btn" onclick="openAccountModal()"><i class="ti ti-plus" aria-hidden="true"></i> Add account</button>
 
-  <div class="tab-panel active" id="panel-simlab">
+    <div class="section-label" style="margin-top:30px;">📊 Account detail</div>
+    <div class="account-detail-picker" id="account-detail-picker"></div>
+    <div id="account-detail-panel"></div>
+  </div>
+
+  <div class="tab-panel" id="panel-simlab">
     <div class="section-label">Sim progress</div>
     <div class="progress-card">
       <div class="progress-head">
@@ -419,10 +453,15 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 
   <div class="tab-panel" id="panel-mantra">
-    <div class="section-label">Pre-trade checklist</div>
+    <div class="section-label">✅ Pre-trade checklist</div>
     <div class="mantra-progress" id="mantra-progress"></div>
     <div class="mantra-list" id="mantra-list"></div>
-    <div class="reset-note">Resets automatically tomorrow</div>
+    <div class="mantra-add-row">
+      <input type="text" id="mantra-new-input" placeholder="Add your own reminder..." onkeydown="if(event.key==='Enter') addMantraItem()">
+      <button onclick="addMantraItem()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+    <button class="add-account-btn" onclick="suggestMantraItems()" style="margin-top:10px;"><i class="ti ti-bulb" aria-hidden="true"></i> 💡 Suggest reminders from my data</button>
+    <div class="reset-note">Checkmarks reset automatically tomorrow — your list stays as you built it</div>
   </div>
 
   <div class="tab-panel" id="panel-log">
@@ -445,8 +484,12 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
       <div class="form-group"><label>R outcome</label><input type="number" id="f-r" placeholder="e.g. 2.5 or -1" step="0.1"></div>
     </div>
+    <div class="form-row">
+      <div class="form-group"><label>$ P&amp;L (for account tracking)</label><input type="number" id="f-pnl" placeholder="e.g. 85.50 or -42" step="0.01"></div>
+      <div class="form-group"><label>Linked account</label><select id="f-linked-account"><option value="">None</option></select></div>
+    </div>
     <div class="form-row3">
-      <div class="form-group"><label>Account</label><select id="f-account"><option value="Backtest">Backtest</option><option value="Sim">Sim / demo</option><option value="Live">Live</option></select></div>
+      <div class="form-group"><label>Category</label><select id="f-account"><option value="Backtest">Backtest</option><option value="Sim">Sim / demo</option><option value="Live">Live</option></select></div>
       <div class="form-group"><label>Direction</label><select id="f-dir"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
       <div class="form-group"><label>Result</label><select id="f-result"><option value="win">Win</option><option value="loss">Loss</option><option value="breakeven">Breakeven</option></select></div>
     </div>
@@ -495,6 +538,29 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 </div>
 
+<div class="modal-wrap" id="account-modal-wrap">
+  <div class="modal">
+    <h2 id="account-modal-title">Add account</h2>
+    <div class="form-group"><label>Account name</label><input type="text" id="acc-name" placeholder="e.g. FTMO Challenge, IC Markets Live"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Account type</label><select id="acc-type" onchange="onAccTypeChange()">
+        <option value="Demo">Demo</option>
+        <option value="Prop Firm">Prop Firm</option>
+        <option value="Live">Live</option>
+      </select></div>
+      <div class="form-group"><label>Starting balance ($)</label><input type="number" id="acc-balance" placeholder="e.g. 10000" step="0.01"></div>
+    </div>
+    <div class="form-group" id="acc-fee-group" style="display:none;">
+      <label>Challenge fee ($) — counted as a loss once</label>
+      <input type="number" id="acc-fee" placeholder="e.g. 150" step="0.01">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAccountModal()">Cancel</button>
+      <button class="btn-save" onclick="saveAccount()">Save account</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 /* ============================================================
@@ -509,9 +575,14 @@ const STORAGE_KEY = 'trading-journal-v2';
 const MANTRA_KEY = 'trading-journal-mantra-v1';
 const TAGS_KEY = 'trading-journal-tags-v2';
 const GOALS_KEY = 'trading-journal-goals-v1';
+const ACCOUNTS_KEY = 'trading-journal-accounts-v1';
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 const MIN_WIN_RATE = 50;
 let goals = { sim: 20, backtest: 20 };
+let accounts = [];
+let nextAccountId = 1;
+let editingAccountId = null;
+let selectedDetailAccountId = null;
 let trades = [];
 let nextId = 1;
 let expandedId = null;
@@ -573,6 +644,7 @@ function backtestTrades() { return activeTrades().filter(t => t.account === 'Bac
 
 const TAB_ORDER_KEY = 'trading-journal-tab-order-v1';
 const TAB_DEFS = {
+  accounts:  { label: 'Accounts',    icon: 'ti-building-bank' },
   simlab:    { label: 'Sim lab',     icon: 'ti-flask' },
   backtest:  { label: 'Backtest',    icon: 'ti-history' },
   brief:     { label: 'Daily brief', icon: 'ti-sun' },
@@ -586,7 +658,7 @@ const TAB_DEFS = {
   log:       { label: 'Trade log',   icon: 'ti-list-details' }
 };
 let tabOrder = Object.keys(TAB_DEFS);
-let activeTabId = 'simlab';
+let activeTabId = 'accounts';
 let dragSourceTab = null;
 
 function loadTabOrder() {
@@ -644,6 +716,7 @@ function switchTab(tab) {
   if (tab === 'timeline') renderWeekChart();
   if (tab === 'simlab') { renderProgressBar('sim'); renderSimEquityChart(); }
   if (tab === 'backtest') { renderProgressBar('backtest'); renderBacktestTab(); }
+  if (tab === 'accounts') { renderAccountsTab(); }
 }
 
 function toggleNewsWeek() {
@@ -771,6 +844,180 @@ function updateGoal(kind, val) {
 }
 
 function persistTrades() { try { localDB.set(STORAGE_KEY, JSON.stringify({ trades, nextId })); setSyncBadge('ok', 'Saved locally'); } catch (e) { setSyncBadge('err', 'Save failed'); } }
+
+/* ============================================================
+   ACCOUNT MANAGEMENT — Demo / Prop Firm / Live
+   Each account: { id, name, type, startingBalance, challengeFee }
+   Trades link via t.accountId (optional). P&L comes from t.pnl ($).
+   Prop firm challenge fee is counted as a one-time loss against
+   that account's balance and P&L totals.
+   ============================================================ */
+function loadAccounts() {
+  try {
+    const result = localDB.get(ACCOUNTS_KEY);
+    if (result && result.value) {
+      const data = JSON.parse(result.value);
+      accounts = data.accounts || [];
+      nextAccountId = data.nextAccountId || (accounts.length ? Math.max(...accounts.map(a=>a.id))+1 : 1);
+    }
+  } catch (e) {}
+  if (accounts.length && selectedDetailAccountId === null) selectedDetailAccountId = accounts[0].id;
+}
+function persistAccounts() { try { localDB.set(ACCOUNTS_KEY, JSON.stringify({ accounts, nextAccountId })); } catch (e) {} }
+
+function openAccountModal() {
+  editingAccountId = null;
+  document.getElementById('account-modal-title').textContent = 'Add account';
+  document.getElementById('acc-name').value = '';
+  document.getElementById('acc-type').value = 'Demo';
+  document.getElementById('acc-balance').value = '';
+  document.getElementById('acc-fee').value = '';
+  onAccTypeChange();
+  document.getElementById('account-modal-wrap').classList.add('open');
+}
+function closeAccountModal() { document.getElementById('account-modal-wrap').classList.remove('open'); editingAccountId = null; }
+function onAccTypeChange() {
+  const isProp = document.getElementById('acc-type').value === 'Prop Firm';
+  document.getElementById('acc-fee-group').style.display = isProp ? 'block' : 'none';
+}
+function saveAccount() {
+  const name = document.getElementById('acc-name').value.trim();
+  const type = document.getElementById('acc-type').value;
+  const startingBalance = parseFloat(document.getElementById('acc-balance').value) || 0;
+  const challengeFee = type === 'Prop Firm' ? (parseFloat(document.getElementById('acc-fee').value) || 0) : 0;
+  if (!name) { alert('Please name this account.'); return; }
+  if (editingAccountId !== null) {
+    const idx = accounts.findIndex(a => a.id === editingAccountId);
+    if (idx !== -1) accounts[idx] = { ...accounts[idx], name, type, startingBalance, challengeFee };
+  } else {
+    const acc = { id: nextAccountId++, name, type, startingBalance, challengeFee };
+    accounts.push(acc);
+    selectedDetailAccountId = acc.id;
+  }
+  closeAccountModal();
+  persistAccounts();
+  populateLinkedAccountOptions();
+  renderAccountsTab();
+}
+function deleteAccount(id, evt) {
+  if (evt) evt.stopPropagation();
+  if (!confirm('Delete this account? Trades linked to it will remain in your log but become unlinked.')) return;
+  accounts = accounts.filter(a => a.id !== id);
+  trades.forEach(t => { if (t.accountId === id) t.accountId = null; });
+  if (selectedDetailAccountId === id) selectedDetailAccountId = accounts.length ? accounts[0].id : null;
+  persistAccounts(); persistTrades();
+  populateLinkedAccountOptions();
+  renderAccountsTab();
+}
+function editAccount(id, evt) {
+  if (evt) evt.stopPropagation();
+  const a = accounts.find(acc => acc.id === id);
+  if (!a) return;
+  editingAccountId = id;
+  document.getElementById('account-modal-title').textContent = 'Edit account';
+  document.getElementById('acc-name').value = a.name;
+  document.getElementById('acc-type').value = a.type;
+  document.getElementById('acc-balance').value = a.startingBalance;
+  document.getElementById('acc-fee').value = a.challengeFee || '';
+  onAccTypeChange();
+  document.getElementById('account-modal-wrap').classList.add('open');
+}
+
+function accountTradesFor(id) { return trades.filter(t => t.accountId === id); }
+
+function calcAccountSummary(acc) {
+  const list = accountTradesFor(acc.id);
+  const tradesPnlSum = list.reduce((s,t) => s + (t.pnl || 0), 0);
+  const fee = acc.type === 'Prop Firm' ? (acc.challengeFee || 0) : 0;
+  const netPnl = tradesPnlSum - fee;
+  const currentBalance = acc.startingBalance + netPnl;
+  const grossWonDollars = list.filter(t => (t.pnl||0) > 0).reduce((s,t) => s + t.pnl, 0);
+  const grossLostDollars = Math.abs(list.filter(t => (t.pnl||0) < 0).reduce((s,t) => s + t.pnl, 0)) + fee;
+  const plRatio = grossLostDollars > 0 ? (grossWonDollars / grossLostDollars) : (grossWonDollars > 0 ? Infinity : 0);
+  return { tradeCount: list.length, tradesPnlSum, fee, netPnl, currentBalance, grossWonDollars, grossLostDollars, plRatio };
+}
+
+function populateLinkedAccountOptions() {
+  const sel = document.getElementById('f-linked-account');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">None</option>' + accounts.map(a => `<option value="${a.id}">${a.name} (${a.type})</option>`).join('');
+  if (accounts.some(a => String(a.id) === current)) sel.value = current;
+}
+
+const ACCOUNT_TYPE_EMOJI = { 'Demo': '🧪', 'Prop Firm': '🏦', 'Live': '🔴' };
+const ACCOUNT_TYPE_CLASS = { 'Demo': 'demo', 'Prop Firm': 'prop', 'Live': 'live' };
+
+function renderAccountsGrid() {
+  const grid = document.getElementById('accounts-grid');
+  if (!accounts.length) { grid.innerHTML = '<div class="empty-msg">No accounts yet — add a Demo, Prop Firm, or Live account to start tracking P&amp;L.</div>'; return; }
+  grid.innerHTML = accounts.map(acc => {
+    const s = calcAccountSummary(acc);
+    const sign = s.netPnl >= 0 ? '+' : '';
+    return `<div class="account-card ${selectedDetailAccountId===acc.id?'selected':''}" onclick="selectDetailAccount(${acc.id})">
+      <button class="account-card-del" onclick="deleteAccount(${acc.id}, event)" aria-label="Delete account"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      <div class="account-card-head">
+        <span class="account-card-name">${ACCOUNT_TYPE_EMOJI[acc.type]} ${acc.name}</span>
+      </div>
+      <span class="account-card-type account-type-${ACCOUNT_TYPE_CLASS[acc.type]}">${acc.type}</span>
+      <div class="account-card-balance ${s.netPnl>=0?'green':'red'}" style="margin-top:10px;">$${s.currentBalance.toFixed(2)}</div>
+      <div class="account-card-meta">
+        <span>P&amp;L: <b class="${s.netPnl>=0?'green':'red'}">${sign}$${s.netPnl.toFixed(2)}</b></span>
+        <span>${s.tradeCount} trade${s.tradeCount===1?'':'s'}</span>
+      </div>
+      ${acc.type==='Prop Firm' && acc.challengeFee ? `<div class="account-card-fee-note">⚠️ Challenge fee $${acc.challengeFee.toFixed(2)} counted as a loss</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function selectDetailAccount(id) { selectedDetailAccountId = id; renderAccountsTab(); }
+
+function renderAccountDetailPicker() {
+  const el = document.getElementById('account-detail-picker');
+  if (!accounts.length) { el.innerHTML = ''; return; }
+  el.innerHTML = accounts.map(a => `<button class="account-pill ${a.id===selectedDetailAccountId?'active':''}" onclick="selectDetailAccount(${a.id})">${ACCOUNT_TYPE_EMOJI[a.type]} ${a.name}</button>`).join('');
+}
+
+function renderAccountDetailPanel() {
+  const panel = document.getElementById('account-detail-panel');
+  const acc = accounts.find(a => a.id === selectedDetailAccountId);
+  if (!acc) { panel.innerHTML = '<div class="empty-msg">Select an account above, or add one to see its detail here.</div>'; return; }
+  const s = calcAccountSummary(acc);
+  const sign = s.netPnl >= 0 ? '+' : '';
+  const plDisplay = s.plRatio === Infinity ? '∞' : s.plRatio.toFixed(2);
+  panel.innerHTML = `
+    <div class="account-detail-stats">
+      <div class="stat-card"><div class="stat-label">Current balance</div><div class="stat-value ${s.netPnl>=0?'green':'red'}">$${s.currentBalance.toFixed(2)}</div></div>
+      <div class="stat-card"><div class="stat-label">Net P&amp;L</div><div class="stat-value ${s.netPnl>=0?'green':'red'}">${sign}$${s.netPnl.toFixed(2)}</div></div>
+      <div class="stat-card"><div class="stat-label">Profit / loss ratio</div><div class="stat-value ${s.plRatio>=1?'green':'red'}">${plDisplay}</div></div>
+      <div class="stat-card"><div class="stat-label">Trades logged</div><div class="stat-value neutral">${s.tradeCount}</div></div>
+    </div>
+    ${acc.type==='Prop Firm' ? `<div class="finding-card" style="margin-bottom:18px;"><div class="finding-icon icon-amber">🏦</div><div class="finding-text">Challenge fee of <strong>$${(acc.challengeFee||0).toFixed(2)}</strong> is included as a loss in this account's P&amp;L and balance.</div></div>` : ''}
+    <button class="add-account-btn" onclick="editAccount(${acc.id})" style="margin-bottom:18px;"><i class="ti ti-pencil" aria-hidden="true"></i> Edit this account</button>
+    <div class="section-label">Trades on this account</div>
+    <div class="trade-list" id="account-trade-list-${acc.id}"></div>
+  `;
+  const list = accountTradesFor(acc.id);
+  const listEl = document.getElementById('account-trade-list-' + acc.id);
+  if (listEl) {
+    if (!list.length) { listEl.innerHTML = '<div class="empty-msg">No trades linked to this account yet. Link trades from the trade log form.</div>'; }
+    else {
+      listEl.innerHTML = [...list].reverse().map(t => {
+        const pnlSign = (t.pnl||0) >= 0 ? '+' : '';
+        return `<div class="trade-card" onclick="editTrade(${t.id}, event)">
+          <div class="trade-row1"><span class="trade-num">#${t.id}</span><span class="trade-date">${formatDate(t.date)}</span></div>
+          <div class="trade-row2"><span class="badge badge-${t.result}">${t.result}</span><span class="r-outcome ${(t.pnl||0)>=0?'r-pos':'r-neg'}">${pnlSign}$${(t.pnl||0).toFixed(2)}</span></div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+function renderAccountsTab() {
+  renderAccountsGrid();
+  renderAccountDetailPicker();
+  renderAccountDetailPanel();
+}
 function persistMantra() { try { localDB.set(MANTRA_KEY, JSON.stringify(mantraState)); } catch (e) {} }
 function persistTags() { try { localDB.set(TAGS_KEY, JSON.stringify(savedTags)); } catch (e) {} }
 
@@ -1184,6 +1431,7 @@ function render() {
   renderStats(); renderEquityChart(); renderDayChart(); renderDayList(); renderBreakdownTab(); renderFindings();
   renderDaySelector(); renderBrief(); renderMonthList(); renderWeekChart(); renderHeatmap(); renderMantra();
   renderTrades(); renderSimLab(); renderProgressBar('sim'); renderProgressBar('backtest'); renderSimEquityChart(); renderBacktestTab();
+  renderAccountsTab();
 }
 
 function toggleExpand(id) { expandedId = expandedId===id ? null : id; renderTrades(); }
@@ -1218,7 +1466,7 @@ document.addEventListener('click', function(e) { if (!e.target.closest('.tag-pic
 let editingTradeId = null;
 let autosaveTimer = null;
 let autosaveBound = false;
-const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-account','f-dir','f-result','f-entrytype','f-attempt','f-newsweek','f-note'];
+const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-pnl','f-linked-account','f-account','f-dir','f-result','f-entrytype','f-attempt','f-newsweek','f-note'];
 
 function openModal() {
   editingTradeId = null;
@@ -1228,6 +1476,9 @@ function openModal() {
   document.getElementById('modal-save-btn').textContent = 'Save trade';
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-r').value = '';
+  document.getElementById('f-pnl').value = '';
+  populateLinkedAccountOptions();
+  document.getElementById('f-linked-account').value = '';
   document.getElementById('f-account').value = 'Backtest';
   document.getElementById('f-dir').value = 'buy';
   document.getElementById('f-result').value = 'win';
@@ -1251,6 +1502,9 @@ function editTrade(id, evt) {
   document.getElementById('modal-title').textContent = 'Edit trade #' + id;
   document.getElementById('f-date').value = t.date;
   document.getElementById('f-r').value = t.r;
+  document.getElementById('f-pnl').value = (t.pnl !== undefined && t.pnl !== null) ? t.pnl : '';
+  populateLinkedAccountOptions();
+  document.getElementById('f-linked-account').value = t.accountId || '';
   document.getElementById('f-account').value = t.account;
   document.getElementById('f-dir').value = t.direction;
   document.getElementById('f-result').value = t.result;
@@ -1303,10 +1557,16 @@ function applyEditInPlace() {
   const idx = trades.findIndex(t => t.id === editingTradeId);
   if (idx === -1) return;
   const wasReady = isReady();
+  const pnlRaw = document.getElementById('f-pnl').value;
+  const pnl = pnlRaw === '' ? null : parseFloat(pnlRaw);
+  const linkedRaw = document.getElementById('f-linked-account').value;
+  const accountId = linkedRaw === '' ? null : parseInt(linkedRaw, 10);
   trades[idx] = {
     ...trades[idx],
     date, day: dayFromDate(date),
     r,
+    pnl: isNaN(pnl) ? null : pnl,
+    accountId,
     account: document.getElementById('f-account').value,
     direction: document.getElementById('f-dir').value,
     result: document.getElementById('f-result').value,
@@ -1352,6 +1612,10 @@ function saveTrade() {
   }
   const date = document.getElementById('f-date').value;
   const r = parseFloat(document.getElementById('f-r').value);
+  const pnlRaw = document.getElementById('f-pnl').value;
+  const pnl = pnlRaw === '' ? null : parseFloat(pnlRaw);
+  const linkedRaw = document.getElementById('f-linked-account').value;
+  const accountId = linkedRaw === '' ? null : parseInt(linkedRaw, 10);
   const account = document.getElementById('f-account').value;
   const direction = document.getElementById('f-dir').value;
   const result = document.getElementById('f-result').value;
@@ -1367,7 +1631,7 @@ function saveTrade() {
   const slHunt = formSlHunt;
   const wasReady = isReady();
 
-  trades.push({ id: nextId++, date, day, direction, result, r, strategyTags, entryModelTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
+  trades.push({ id: nextId++, date, day, direction, result, r, pnl: isNaN(pnl)?null:pnl, accountId, strategyTags, entryModelTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
 
   closeModal(); render(); setSaving('Saving...'); persistTrades(); setSaving('');
   if (!wasReady && isReady()) {
@@ -1375,10 +1639,13 @@ function saveTrade() {
   }
 }
 document.getElementById('modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
+document.getElementById('account-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeAccountModal(); });
 
 loadTabOrder();
 renderSidebarTabs();
+loadAccounts();
 loadTrades();
+populateLinkedAccountOptions();
 </script>
 </body>
 </html>
