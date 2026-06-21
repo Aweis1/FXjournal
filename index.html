@@ -213,12 +213,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .legend-swatch { width: 13px; height: 13px; border-radius: 3px; }
 
 .mantra-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
-.mantra-item { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 12px; padding: 13px; display: flex; gap: 11px; align-items: flex-start; cursor: pointer; }
+.mantra-item { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 12px; padding: 13px; display: flex; gap: 11px; align-items: flex-start; }
 .mantra-item.checked { background: #0f1a14; border-color: #1d5e44; }
-.mantra-check { width: 21px; height: 21px; border-radius: 6px; border: 1.5px solid #2a2d3a; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: background 0.15s, border-color 0.15s; }
+.mantra-check { width: 21px; height: 21px; border-radius: 6px; border: 1.5px solid #2a2d3a; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: background 0.15s, border-color 0.15s; cursor: pointer; }
 .mantra-item.checked .mantra-check { background: #1d5e44; border-color: #1d5e44; color: #8de8b8; }
-.mantra-text { font-size: 13px; line-height: 1.5; color: #cfd1dc; }
+.mantra-text { font-size: 13px; line-height: 1.5; color: #cfd1dc; flex: 1; outline: none; border-radius: 6px; padding: 2px 4px; }
+.mantra-text:focus { background: #181a26; box-shadow: 0 0 0 1px #4a3a5e; }
 .mantra-item.checked .mantra-text { color: #82869a; text-decoration: line-through; }
+.mantra-item .delete-btn { flex-shrink: 0; }
+.mantra-add-row { display: flex; gap: 8px; margin-top: 8px; }
+.mantra-add-row input { flex: 1; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; color: #f0f1f4; font-size: 13px; padding: 10px 12px; font-family: inherit; }
+.mantra-add-row input:focus { outline: none; border-color: #8b5cf6; }
+.mantra-add-row button { padding: 10px 14px; background: linear-gradient(145deg, #7c3aed, #5b21b6); border: 1px solid #a855f7; border-radius: 9px; color: #f3e8ff; cursor: pointer; font-size: 15px; }
 .mantra-progress { font-size: 11.5px; color: #6b6f80; text-align: center; margin-bottom: 13px; }
 .reset-note { font-size: 10.5px; color: #44475a; text-align: center; margin-top: 8px; }
 
@@ -247,6 +253,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 
 .add-account-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 12px; background: #1a1a1d; border: 1px dashed #3e4154; border-radius: 12px; color: #8d90a0; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.12s, color 0.12s; }
 .add-account-btn:hover { border-color: #8b5cf6; color: #d6b8ff; }
+.import-row { margin-bottom: 14px; }
+
+.import-review-table-wrap { max-height: 360px; overflow-y: auto; border: 1px solid #34343a; border-radius: 10px; margin-bottom: 14px; }
+.import-review-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.import-review-table th { text-align: left; padding: 8px 10px; background: #1a1a1d; color: #767a8c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; position: sticky; top: 0; }
+.import-review-table td { padding: 7px 10px; border-top: 1px solid #28282c; color: #c6c8d6; }
+.import-review-table tr.dup td { color: #4a4d60; }
+.import-summary { font-size: 12.5px; color: #a78bda; margin-bottom: 12px; display: flex; gap: 16px; }
+.import-summary b { color: #f0f1f4; }
 
 .account-detail-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
 .account-pill { padding: 7px 13px; border-radius: 9px; background: #1a1a1d; border: 1px solid #34343a; color: #8d90a0; font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit; }
@@ -466,6 +481,10 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
 
   <div class="tab-panel" id="panel-log">
     <div class="section-label">Trades</div>
+    <div class="import-row">
+      <button class="add-account-btn" onclick="document.getElementById('mt5-csv-input').click()"><i class="ti ti-file-import" aria-hidden="true"></i> 📥 Import from MT5 (CSV)</button>
+      <input type="file" id="mt5-csv-input" accept=".csv" style="display:none;" onchange="handleMt5CsvSelected(event)">
+    </div>
     <div class="trade-list" id="trade-list"></div>
   </div>
 
@@ -561,6 +580,28 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 </div>
 
+<div class="modal-wrap" id="import-modal-wrap">
+  <div class="modal" style="max-width:640px;">
+    <h2>📥 Import from MT5</h2>
+    <div class="form-group">
+      <label>Link imported trades to account</label>
+      <select id="import-link-account"><option value="">Don't link / keep unlinked</option></select>
+    </div>
+    <div class="form-group">
+      <label>Mark imported trades as</label>
+      <select id="import-category"><option value="Live">Live</option><option value="Sim">Sim / demo</option><option value="Backtest">Backtest</option></select>
+    </div>
+    <div class="import-summary" id="import-summary"></div>
+    <div class="import-review-table-wrap">
+      <table class="import-review-table" id="import-review-table"></table>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeImportModal()">Cancel</button>
+      <button class="btn-save" onclick="confirmImport()">Import trades</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 /* ============================================================
@@ -590,7 +631,14 @@ let equityChart=null, dayChart=null, weekChart=null, simEquityChart=null, btEqui
 let newsWeekOnly = false;
 let overviewAccount = 'all';
 let briefDay = new Date().getDay() >= 1 && new Date().getDay() <= 5 ? DAYS[new Date().getDay() - 1] : 'Monday';
-let mantraState = { date: null, checked: {} };
+let mantraState = { date: null, checked: {}, items: null, nextMantraId: 1 };
+const DEFAULT_MANTRA_ITEMS = [
+  { id: 1, text: 'Wait for your setup to fully confirm before re-entering after a loss.' },
+  { id: 2, text: "Tag your losing trades with a reason — the pattern only shows up once you do." },
+  { id: 3, text: "Only take trades that match a strategy you've defined and tracked." },
+  { id: 4, text: 'If trading to "prove the market wrong" or from ego, step away.' },
+  { id: 5, text: 'Risk a fixed, predefined amount per trade. No exceptions.' }
+];
 
 let savedTags = {
   strategy: ['Breakout', 'Reversal', 'Continuation', 'Valid setup', 'Invalid setup'],
@@ -811,8 +859,16 @@ async function loadTrades() {
     const today = new Date().toISOString().split('T')[0];
     if (mResult && mResult.value) {
       mantraState = JSON.parse(mResult.value);
-      if (mantraState.date !== today) { mantraState = { date: today, checked: {} }; persistMantra(); }
-    } else { mantraState = { date: today, checked: {} }; persistMantra(); }
+      if (!mantraState.items || !mantraState.items.length) {
+        mantraState.items = DEFAULT_MANTRA_ITEMS.map(i => ({...i}));
+        mantraState.nextMantraId = DEFAULT_MANTRA_ITEMS.length + 1;
+      }
+      if (mantraState.nextMantraId === undefined) mantraState.nextMantraId = Math.max(...mantraState.items.map(i=>i.id), 0) + 1;
+      if (mantraState.date !== today) { mantraState.date = today; mantraState.checked = {}; persistMantra(); }
+    } else {
+      mantraState = { date: today, checked: {}, items: DEFAULT_MANTRA_ITEMS.map(i => ({...i})), nextMantraId: DEFAULT_MANTRA_ITEMS.length + 1 };
+      persistMantra();
+    }
   } catch (e) {}
 
   try {
@@ -899,6 +955,133 @@ function saveAccount() {
   populateLinkedAccountOptions();
   renderAccountsTab();
 }
+/* ============================================================
+   MT5 CSV IMPORT
+   Reads the CSV produced by TradingJournalExporter.mq5 (or any
+   CSV with matching headers) and lets the user review + commit
+   trades into the journal. Dedupes against existing trades using
+   the MT5 ticket number stored in t.mt5Ticket.
+   Expected headers: ticket,date,symbol,type,volume,entry_price,
+   exit_price,sl,tp,profit,swap,commission,comment,magic
+   ============================================================ */
+let pendingImportRows = [];
+
+function handleMt5CsvSelected(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const rows = parseMt5Csv(e.target.result);
+      if (!rows.length) { alert('No valid trade rows found in that file.'); return; }
+      openImportModal(rows);
+    } catch (err) {
+      alert('Could not read that CSV. Make sure it was exported by the TradingJournalExporter script or matches its column format.');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+
+function parseMt5Csv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+  if (!lines.length) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+    if (cells.length < 2) continue;
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = cells[idx] !== undefined ? cells[idx] : ''; });
+    if (!row.ticket || !row.date) continue;
+    rows.push(row);
+  }
+  return rows;
+}
+
+function openImportModal(rows) {
+  pendingImportRows = rows;
+  populateImportLinkOptions();
+  renderImportReview();
+  document.getElementById('import-modal-wrap').classList.add('open');
+}
+function closeImportModal() { document.getElementById('import-modal-wrap').classList.remove('open'); pendingImportRows = []; }
+function populateImportLinkOptions() {
+  const sel = document.getElementById('import-link-account');
+  sel.innerHTML = '<option value="">Don\'t link / keep unlinked</option>' + accounts.map(a => `<option value="${a.id}">${a.name} (${a.type})</option>`).join('');
+}
+
+function existingMt5Tickets() { return new Set(trades.filter(t => t.mt5Ticket).map(t => String(t.mt5Ticket))); }
+
+function renderImportReview() {
+  const existing = existingMt5Tickets();
+  const newCount = pendingImportRows.filter(r => !existing.has(String(r.ticket))).length;
+  const dupCount = pendingImportRows.length - newCount;
+  document.getElementById('import-summary').innerHTML = `<span>📄 <b>${pendingImportRows.length}</b> rows found</span><span>🆕 <b>${newCount}</b> new</span><span>♻️ <b>${dupCount}</b> already imported (skipped)</span>`;
+
+  const table = document.getElementById('import-review-table');
+  table.innerHTML = `<tr><th>Ticket</th><th>Date</th><th>Symbol</th><th>Type</th><th>P&amp;L</th><th>Status</th></tr>` +
+    pendingImportRows.map(r => {
+      const isDup = existing.has(String(r.ticket));
+      const pnl = parseFloat(r.profit || 0) + parseFloat(r.swap || 0) + parseFloat(r.commission || 0);
+      const pnlSign = pnl >= 0 ? '+' : '';
+      return `<tr class="${isDup?'dup':''}">
+        <td>${r.ticket}</td><td>${r.date}</td><td>${r.symbol||'—'}</td><td>${r.type||'—'}</td>
+        <td style="color:${pnl>=0?'#34e29a':'#ff6b66'}">${pnlSign}$${pnl.toFixed(2)}</td>
+        <td>${isDup ? 'Already imported' : 'Will import'}</td>
+      </tr>`;
+    }).join('');
+}
+
+function confirmImport() {
+  const existing = existingMt5Tickets();
+  const linkRaw = document.getElementById('import-link-account').value;
+  const accountId = linkRaw === '' ? null : parseInt(linkRaw, 10);
+  const category = document.getElementById('import-category').value;
+  const wasReady = isReady();
+
+  let imported = 0;
+  pendingImportRows.forEach(r => {
+    if (existing.has(String(r.ticket))) return;
+    const pnl = parseFloat(r.profit || 0) + parseFloat(r.swap || 0) + parseFloat(r.commission || 0);
+    const date = normalizeImportDate(r.date);
+    const direction = (r.type || '').toLowerCase().includes('sell') ? 'sell' : 'buy';
+    const result = pnl > 0 ? 'win' : (pnl < 0 ? 'loss' : 'breakeven');
+    trades.push({
+      id: nextId++,
+      date, day: dayFromDate(date),
+      direction, result,
+      r: 0,
+      pnl: Math.round(pnl * 100) / 100,
+      accountId,
+      strategyTags: [], entryModelTags: [], failTags: [],
+      entryType: 'Conservative', attempt: '1st', newsWeek: false, slHunt: false,
+      account: category,
+      mt5Ticket: r.ticket,
+      mt5Symbol: r.symbol || '',
+      note: `Imported from MT5 — ${r.symbol || ''} ${direction}, ticket #${r.ticket}.`.trim()
+    });
+    imported++;
+  });
+
+  closeImportModal();
+  render();
+  setSaving('Saving...'); persistTrades(); setSaving('');
+  alert(`✅ Imported ${imported} trade${imported===1?'':'s'} from MT5.` + (pendingImportRows.length - imported > 0 ? ` (${pendingImportRows.length - imported} skipped as already imported.)` : ''));
+  if (!wasReady && isReady()) {
+    setTimeout(() => { alert('🚀 Sim lab milestone reached!\n\nYou\'ve logged ' + goals.sim + '+ sim trades with a win rate above ' + MIN_WIN_RATE + '% and a positive net R.\n\nYour demo performance now meets the bar you set for moving to a live account. Check the Sim lab tab for the full breakdown.'); }, 300);
+  }
+}
+
+function normalizeImportDate(d) {
+  if (!d) return new Date().toISOString().split('T')[0];
+  // Handles formats like 2025-06-02 or 2025.06.02
+  const cleaned = d.replace(/\./g, '-');
+  const m = cleaned.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  return new Date().toISOString().split('T')[0];
+}
+
 function deleteAccount(id, evt) {
   if (evt) evt.stopPropagation();
   if (!confirm('Delete this account? Trades linked to it will remain in your log but become unlinked.')) return;
@@ -1269,28 +1452,70 @@ function renderHeatmap() {
 }
 
 function renderMantra() {
-  const list = activeTrades();
-  const items = [];
-  const secondAttempts = list.filter(t=>t.attempt==='2nd');
-  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='win').length; const rate=(wins/secondAttempts.length)*100; items.push(`Your 2nd attempt wins ${rate.toFixed(0)}% of the time. Be patient after a loss before re-entering.`); }
-  else { items.push(`Wait for your setup to fully confirm before re-entering after a loss.`); }
-  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='loss')).filter(g=>g.name!=='Untagged');
-  if (byFail.length) { const top=[...byFail].sort((a,b)=>b.total-a.total)[0]; items.push(`"${top.name}" is your most logged reason for losing trades. Watch for it before you enter.`); }
-  else { items.push(`Tag your losing trades with a reason — the pattern only shows up once you do.`); }
-  const validVsInvalid = groupByTagField('strategyTags', list).filter(g=>g.name==='Valid setup'||g.name==='Invalid setup');
-  if (validVsInvalid.length===2) { const valid=validVsInvalid.find(g=>g.name==='Valid setup'); items.push(`Valid setups win ${valid.winRate.toFixed(0)}% of the time. Don't take a trade unless your full checklist is met.`); }
-  else { items.push(`Only take trades that match a strategy you've defined and tracked.`); }
-  items.push(`If you're trading to "prove the market wrong" or from ego, step away — that mindset has a track record of losses.`);
-  const s = calcStatsFor(list);
-  if (s.total > 0) { items.push(`Your expectancy is ${s.expectancy>=0?'+':''}${s.expectancy.toFixed(2)}R per trade. Don't deviate from your risk per trade.`); }
-  else { items.push(`Risk a fixed, predefined amount per trade. No exceptions.`); }
-
-  const progress = items.filter((_,i)=>mantraState.checked[i]).length;
-  document.getElementById('mantra-progress').textContent = `${progress} of ${items.length} checked`;
-  document.getElementById('mantra-list').innerHTML = items.map((text,i) => `<div class="mantra-item ${mantraState.checked[i]?'checked':''}" onclick="toggleMantra(${i})">
-    <div class="mantra-check">${mantraState.checked[i]?'<i class="ti ti-check" aria-hidden="true" style="font-size:13px;"></i>':''}</div><div class="mantra-text">${text}</div></div>`).join('');
+  const items = mantraState.items || [];
+  const progress = items.filter(it => mantraState.checked[it.id]).length;
+  document.getElementById('mantra-progress').textContent = items.length ? `${progress} of ${items.length} checked` : 'No reminders yet — add your own below';
+  document.getElementById('mantra-list').innerHTML = items.map(it => `
+    <div class="mantra-item ${mantraState.checked[it.id]?'checked':''}">
+      <div class="mantra-check" onclick="toggleMantra(${it.id})">${mantraState.checked[it.id]?'<i class="ti ti-check" aria-hidden="true" style="font-size:13px;"></i>':''}</div>
+      <div class="mantra-text" contenteditable="true" onblur="editMantraText(${it.id}, this.textContent)" onkeydown="if(event.key==='Enter'){event.preventDefault(); this.blur();}">${it.text}</div>
+      <button class="delete-btn" onclick="deleteMantraItem(${it.id}, event)" aria-label="Delete reminder"><i class="ti ti-trash" aria-hidden="true"></i></button>
+    </div>`).join('');
 }
-function toggleMantra(i) { mantraState.checked[i] = !mantraState.checked[i]; renderMantra(); persistMantra(); }
+
+function toggleMantra(id) { mantraState.checked[id] = !mantraState.checked[id]; renderMantra(); persistMantra(); }
+
+function addMantraItem() {
+  const input = document.getElementById('mantra-new-input');
+  const text = input.value.trim();
+  if (!text) return;
+  mantraState.items.push({ id: mantraState.nextMantraId++, text });
+  input.value = '';
+  renderMantra();
+  persistMantra();
+}
+
+function editMantraText(id, newText) {
+  const item = mantraState.items.find(i => i.id === id);
+  const trimmed = (newText || '').trim();
+  if (!item) return;
+  if (!trimmed) { renderMantra(); return; } // don't allow blanking out via edit; revert on render
+  item.text = trimmed;
+  persistMantra();
+}
+
+function deleteMantraItem(id, evt) {
+  if (evt) evt.stopPropagation();
+  mantraState.items = mantraState.items.filter(i => i.id !== id);
+  delete mantraState.checked[id];
+  renderMantra();
+  persistMantra();
+}
+
+function suggestMantraItems() {
+  const list = activeTrades();
+  const suggestions = [];
+  const secondAttempts = list.filter(t=>t.attempt==='2nd');
+  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='win').length; const rate=(wins/secondAttempts.length)*100; suggestions.push(`Your 2nd attempt wins ${rate.toFixed(0)}% of the time. Be patient after a loss before re-entering.`); }
+  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='loss')).filter(g=>g.name!=='Untagged');
+  if (byFail.length) { const top=[...byFail].sort((a,b)=>b.total-a.total)[0]; suggestions.push(`"${top.name}" is your most logged reason for losing trades. Watch for it before you enter.`); }
+  const validVsInvalid = groupByTagField('strategyTags', list).filter(g=>g.name==='Valid setup'||g.name==='Invalid setup');
+  if (validVsInvalid.length===2) { const valid=validVsInvalid.find(g=>g.name==='Valid setup'); suggestions.push(`Valid setups win ${valid.winRate.toFixed(0)}% of the time. Don't take a trade unless your full checklist is met.`); }
+  const s = calcStatsFor(list);
+  if (s.total > 0) suggestions.push(`Your expectancy is ${s.expectancy>=0?'+':''}${s.expectancy.toFixed(2)}R per trade. Don't deviate from your risk per trade.`);
+  const byDay = calcByDay(list).filter(d=>d.total>0);
+  if (byDay.length) { const worst=[...byDay].sort((a,b)=>a.netR-b.netR)[0]; suggestions.push(`${worst.day} has historically been your weakest day (${worst.netR>=0?'+':''}${worst.netR.toFixed(2)}R). Trade smaller or more selectively.`); }
+
+  if (!suggestions.length) { alert('Not enough trade data yet to generate suggestions — log a few more trades first.'); return; }
+  const existingTexts = new Set(mantraState.items.map(i => i.text));
+  let added = 0;
+  suggestions.forEach(text => {
+    if (!existingTexts.has(text)) { mantraState.items.push({ id: mantraState.nextMantraId++, text }); added++; }
+  });
+  renderMantra();
+  persistMantra();
+  if (added === 0) alert('Your checklist already includes all the current suggestions.');
+}
 
 /* --- PROGRESS BARS --- */
 function renderProgressBar(kind) {
@@ -1640,6 +1865,7 @@ function saveTrade() {
 }
 document.getElementById('modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
 document.getElementById('account-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeAccountModal(); });
+document.getElementById('import-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeImportModal(); });
 
 loadTabOrder();
 renderSidebarTabs();
