@@ -93,9 +93,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .badge { font-size: 9.5px; font-weight: 700; padding: 3.5px 8px; border-radius: 6px; letter-spacing: 0.02em; text-transform: uppercase; }
 .badge-buy { background: #122846; color: #5ea7ff; }
 .badge-sell { background: #261c3a; color: #c79bff; }
-.badge-win { background: #0e2a1f; color: #34e29a; }
-.badge-loss { background: #2e1414; color: #ff6b66; }
-.badge-breakeven { background: #2f2510; color: #ffb547; }
+.badge-tp { background: #0e2a1f; color: #34e29a; }
+.badge-sl { background: #2e1414; color: #ff6b66; }
+.badge-be { background: #2f2510; color: #ffb547; }
 .badge-day { background: #2a2a2e; color: #a6a9ba; }
 .badge-strategy { background: #261c3a; color: #c79bff; }
 .badge-entrymodel { background: #2f2510; color: #ffb547; }
@@ -254,6 +254,74 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .add-account-btn { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 12px; background: #1a1a1d; border: 1px dashed #3e4154; border-radius: 12px; color: #8d90a0; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.12s, color 0.12s; }
 .add-account-btn:hover { border-color: #8b5cf6; color: #d6b8ff; }
 .import-row { margin-bottom: 14px; }
+
+.log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.log-view-toggle { display: flex; gap: 4px; background: #1a1a1d; border: 1px solid #34343a; border-radius: 10px; padding: 4px; }
+.log-view-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 7px; background: transparent; border: none; color: #767a8c; cursor: pointer; font-size: 15px; }
+.log-view-btn:hover { color: #c5c7d4; }
+.log-view-btn.active { background: linear-gradient(135deg, #4a3a5e, #362a48); color: #f3e8ff; box-shadow: inset 0 0 0 1px #8b5cf6; }
+
+.log-view-panel { display: none; }
+.log-view-panel.active { display: block; }
+
+/* Table view — matches screenshot column layout */
+.trade-table-wrap { overflow-x: auto; border: 1px solid #28282c; border-radius: 14px; }
+.trade-table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+.trade-table th { text-align: left; padding: 14px 16px; font-size: 10.5px; color: #767a8c; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; background: #15151a; border-bottom: 1px solid #28282c; white-space: nowrap; }
+.trade-table td { padding: 14px 16px; font-size: 13px; color: #d6d8e2; border-bottom: 1px solid #1e1e22; vertical-align: middle; }
+.trade-table tr.row-tp { box-shadow: inset 3px 0 0 0 #34e29a; }
+.trade-table tr.row-sl { box-shadow: inset 3px 0 0 0 #ff6b66; }
+.trade-table tr.row-be { box-shadow: inset 3px 0 0 0 #ffb547; }
+.trade-table tr:hover td { background: #14141a; }
+.tt-date { color: #9a9eb0; font-size: 12px; white-space: nowrap; }
+.tt-pair { font-weight: 700; color: #f0f1f4; }
+.tt-dir { display: inline-flex; align-items: center; gap: 4px; color: #9a9eb0; font-size: 12px; }
+.tt-status { font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 7px; display: inline-block; }
+.tt-status-tp { background: #0e2a1f; color: #34e29a; }
+.tt-status-sl { background: #2e1414; color: #ff6b66; }
+.tt-status-be { background: #2f2510; color: #ffb547; }
+.tt-account { display: flex; align-items: center; gap: 7px; color: #c6c8d6; font-size: 12.5px; white-space: nowrap; }
+.tt-account-bar { width: 3px; height: 16px; border-radius: 2px; background: #8b5cf6; flex-shrink: 0; }
+.tt-trend { font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 7px; white-space: nowrap; }
+.tt-trend-pro { background: #2f2510; color: #ffb547; }
+.tt-trend-counter { background: #2f2510; color: #ffb547; }
+.tt-condition { font-weight: 600; color: #f0f1f4; font-size: 13px; max-width: 200px; line-height: 1.35; }
+.tt-confluences { display: flex; flex-wrap: wrap; gap: 5px; max-width: 280px; }
+.tt-confluence-chip { background: #24242a; color: #c6c8d6; font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+.tt-pnl { font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+.tt-actions-btn { background: none; border: none; color: #3e4154; cursor: pointer; font-size: 16px; padding: 4px; }
+.tt-actions-btn:hover { color: #ff6b66; }
+.tt-empty-cell { color: #44475a; }
+
+/* Grid view */
+.trade-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.tg-card { background: linear-gradient(155deg, #1f1f23, #1a1a1d); border: 1px solid #28282c; border-radius: 14px; padding: 16px; cursor: pointer; transition: border-color 0.15s; position: relative; }
+.tg-card:hover { border-color: #4a3a5e; }
+.tg-card.row-tp { box-shadow: inset 3px 0 0 0 #34e29a; }
+.tg-card.row-sl { box-shadow: inset 3px 0 0 0 #ff6b66; }
+.tg-card.row-be { box-shadow: inset 3px 0 0 0 #ffb547; }
+.tg-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.tg-pair { font-weight: 700; font-size: 14.5px; color: #f0f1f4; }
+.tg-date { font-size: 11px; color: #767a8c; margin-top: 2px; }
+.tg-pnl { font-size: 18px; font-weight: 700; }
+.tg-condition { font-size: 12.5px; color: #c6c8d6; margin: 10px 0; line-height: 1.4; }
+.tg-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+.tg-confluences { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* Calendar view */
+.cal-header { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 16px; }
+.cal-nav-btn { width: 32px; height: 32px; border-radius: 8px; background: #1a1a1d; border: 1px solid #34343a; color: #c6c8d6; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cal-nav-btn:hover { border-color: #8b5cf6; }
+.cal-month-label { font-size: 15px; font-weight: 700; min-width: 160px; text-align: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-dow { text-align: center; font-size: 10.5px; color: #767a8c; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 6px; font-weight: 700; }
+.cal-cell { min-height: 84px; border-radius: 10px; background: #15151a; border: 1px solid #24242a; padding: 8px; position: relative; }
+.cal-cell.empty { background: transparent; border: none; }
+.cal-cell.has-trades { cursor: pointer; }
+.cal-cell.has-trades:hover { border-color: #4a3a5e; }
+.cal-daynum { font-size: 11px; color: #767a8c; margin-bottom: 4px; }
+.cal-day-pnl { font-size: 13px; font-weight: 700; }
+.cal-day-count { font-size: 10px; color: #767a8c; margin-top: 2px; }
 
 .import-review-table-wrap { max-height: 360px; overflow-y: auto; border: 1px solid #34343a; border-radius: 10px; margin-bottom: 14px; }
 .import-review-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -480,12 +548,37 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 
   <div class="tab-panel" id="panel-log">
-    <div class="section-label">Trades</div>
+    <div class="log-header">
+      <div class="section-label" style="margin:0;">📋 Trades</div>
+      <div class="log-view-toggle">
+        <button class="log-view-btn active" data-view="table" onclick="setLogView('table')" title="List view"><i class="ti ti-list" aria-hidden="true"></i></button>
+        <button class="log-view-btn" data-view="grid" onclick="setLogView('grid')" title="Grid view"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
+        <button class="log-view-btn" data-view="calendar" onclick="setLogView('calendar')" title="Calendar view"><i class="ti ti-calendar" aria-hidden="true"></i></button>
+      </div>
+    </div>
     <div class="import-row">
       <button class="add-account-btn" onclick="document.getElementById('mt5-csv-input').click()"><i class="ti ti-file-import" aria-hidden="true"></i> 📥 Import from MT5 (CSV)</button>
       <input type="file" id="mt5-csv-input" accept=".csv" style="display:none;" onchange="handleMt5CsvSelected(event)">
     </div>
-    <div class="trade-list" id="trade-list"></div>
+
+    <div class="log-view-panel active" id="log-view-table">
+      <div class="trade-table-wrap">
+        <table class="trade-table" id="trade-table"></table>
+      </div>
+    </div>
+
+    <div class="log-view-panel" id="log-view-grid">
+      <div class="trade-grid" id="trade-grid"></div>
+    </div>
+
+    <div class="log-view-panel" id="log-view-calendar">
+      <div class="cal-header">
+        <button class="cal-nav-btn" onclick="shiftCalMonth(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+        <span class="cal-month-label" id="cal-month-label"></span>
+        <button class="cal-nav-btn" onclick="shiftCalMonth(1)"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
   </div>
 
   <button class="fab" onclick="openModal()" aria-label="Log a new trade"><i class="ti ti-plus" aria-hidden="true"></i></button>
@@ -507,10 +600,24 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="form-group"><label>$ P&amp;L (for account tracking)</label><input type="number" id="f-pnl" placeholder="e.g. 85.50 or -42" step="0.01"></div>
       <div class="form-group"><label>Linked account</label><select id="f-linked-account"><option value="">None</option></select></div>
     </div>
-    <div class="form-row3">
-      <div class="form-group"><label>Category</label><select id="f-account"><option value="Backtest">Backtest</option><option value="Sim">Sim / demo</option><option value="Live">Live</option></select></div>
+    <div class="form-row">
       <div class="form-group"><label>Direction</label><select id="f-dir"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
-      <div class="form-group"><label>Result</label><select id="f-result"><option value="win">Win</option><option value="loss">Loss</option><option value="breakeven">Breakeven</option></select></div>
+      <div class="form-group"><label>Status</label><select id="f-result"><option value="tp">🟢 TP</option><option value="sl">🔴 SL</option><option value="be">🟡 BE</option></select></div>
+      <div class="form-group"><label>Trend</label><select id="f-trend"><option value="Pro Trend">Pro Trend</option><option value="Counter Trend">Counter Trend</option></select></div>
+    </div>
+
+    <div class="form-group">
+      <label>Condition</label>
+      <input type="text" id="f-condition" placeholder="e.g. London 50% Asia Continuation">
+    </div>
+
+    <div class="form-group">
+      <label>Confluences</label>
+      <div class="tag-picker-wrap">
+        <button type="button" class="tag-add-btn" onclick="toggleDropdown('entrymodel')"><i class="ti ti-plus" aria-hidden="true"></i>Add confluences</button>
+        <div class="tag-dropdown" id="dropdown-entrymodel"></div>
+      </div>
+      <div class="tag-selected-list" id="selected-entrymodel"></div>
     </div>
 
     <div class="form-group">
@@ -523,15 +630,6 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
     </div>
 
     <div class="form-group">
-      <label>Entry model tags</label>
-      <div class="tag-picker-wrap">
-        <button type="button" class="tag-add-btn" onclick="toggleDropdown('entrymodel')"><i class="ti ti-plus" aria-hidden="true"></i>Add entry model tags</button>
-        <div class="tag-dropdown" id="dropdown-entrymodel"></div>
-      </div>
-      <div class="tag-selected-list" id="selected-entrymodel"></div>
-    </div>
-
-    <div class="form-group">
       <label>Reason for failing / behavior tags</label>
       <div class="tag-picker-wrap">
         <button type="button" class="tag-add-btn" onclick="toggleDropdown('failtag')"><i class="ti ti-plus" aria-hidden="true"></i>Add tags</button>
@@ -540,7 +638,8 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="tag-selected-list" id="selected-failtag"></div>
     </div>
 
-    <div class="form-row">
+    <div class="form-row3">
+      <div class="form-group"><label>Category</label><select id="f-account"><option value="Backtest">Backtest</option><option value="Sim">Sim / demo</option><option value="Live">Live</option></select></div>
       <div class="form-group"><label>Entry type</label><select id="f-entrytype"><option value="Conservative">Conservative</option><option value="Aggressive">Aggressive</option></select></div>
       <div class="form-group"><label>Attempt</label><select id="f-attempt"><option value="1st">1st</option><option value="2nd">2nd</option></select></div>
     </div>
@@ -789,24 +888,24 @@ function seedBacktestTrades() {
     '2025-05-26','2025-05-27','2025-05-28' // week 4: trades 16-18
   ];
   const raw = [
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Strayed from plan, lied to myself and chased entry. There was liquidity level near and still traded blindly.' },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Same as previous trade: chased entry, ignored a nearby liquidity level.' },
-    { result:'breakeven', r:0, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Same as trade 1: breakeven and stop loss.' },
-    { result:'win', r:1, tags:['Valid setup'], fail:[], note:'Followed my plan to a T, as it was all laid before my kill zone. Breakeven and take profit.' },
-    { result:'breakeven', r:0, tags:['Valid setup'], fail:[], note:"Followed my plan to a T, but price didn't have enough volatility to move to TP. Breakeven and stop loss." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Revenge / re-entry too many times','Forced trade / anticipated move'], note:'Decisional re-entry off trade 5, delusional, took a trade from a 1 pip demand hoping for a crazy R/R.' },
-    { result:'breakeven', r:0, tags:['Valid setup'], fail:['Forced trade / anticipated move'], note:'Price was in a week of reaccumulation. Forced a trade trying to anticipate a medium inducement — sellers were in overall control despite buyers showing as in control (UM). Liquidity sweep occurred, two minor inducements back to back heading into my POI. Waited for confirmation and traded on the 7th and 8th — breakeven/stop-loss, ~1% up overall on this pair of attempts.' },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Revenge / re-entry too many times','Missed structure check'], note:"Tried to re-enter hoping to get more than a minor inducement. Didn't read price or account for how small a move a minor inducement can cause." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Missed structure check'], note:"Didn't check 15 min level structure; a medium inducement occurred within my session and stopped me out. Was in delusion as my zone became part of trend-line liquidity." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Forced trade / anticipated move','Missed structure check'], note:"Learned from winter arc 2 and used trading plan accordingly. Tried to anticipate where a new trend begins from. There was a consolidation build-up I wasn't aware of — got lost in the sauce. Put trade above a zone highly congested to the left. Price took both sides of consolidation (UM) and made its intent clear." },
-    { result:'loss', r:-1, tags:['Valid setup'], fail:['Traded from impulse candle alone'], note:'All confluences and checklist met. Unintentional movement before transitioning to phase 2. Traded from an impulse candle alone, got shortly induced before price went to TP. Valid loss.' },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
-    { result:'loss', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline','Revenge / re-entry too many times'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Tried to re-enter 4 times, married my strategy. Invalid setup, invalid approach, no discipline, no actual focus." },
-    { result:'breakeven', r:0, tags:['Valid setup'], fail:[], note:'Cleared my mind a bit and confronted the lowly desires and temptations without giving in. Spotted a good setup, secured a breakeven, but had an unrealistic take profit above my session pip range. Breakeven and stop loss.' },
-    { result:'win', r:1, tags:['Valid setup'], fail:[], note:'17th trade — on notes.' },
-    { result:'win', r:1, tags:['Valid setup'], fail:[], note:'18th trade — on notes.' },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Strayed from plan, lied to myself and chased entry. There was liquidity level near and still traded blindly.' },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Same as previous trade: chased entry, ignored a nearby liquidity level.' },
+    { result:'be', r:0, tags:['Invalid setup'], fail:['Chased entry','Ignored liquidity level'], note:'Same as trade 1: breakeven and stop loss.' },
+    { result:'tp', r:1, tags:['Valid setup'], fail:[], note:'Followed my plan to a T, as it was all laid before my kill zone. Breakeven and take profit.' },
+    { result:'be', r:0, tags:['Valid setup'], fail:[], note:"Followed my plan to a T, but price didn't have enough volatility to move to TP. Breakeven and stop loss." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Revenge / re-entry too many times','Forced trade / anticipated move'], note:'Decisional re-entry off trade 5, delusional, took a trade from a 1 pip demand hoping for a crazy R/R.' },
+    { result:'be', r:0, tags:['Valid setup'], fail:['Forced trade / anticipated move'], note:'Price was in a week of reaccumulation. Forced a trade trying to anticipate a medium inducement — sellers were in overall control despite buyers showing as in control (UM). Liquidity sweep occurred, two minor inducements back to back heading into my POI. Waited for confirmation and traded on the 7th and 8th — breakeven/stop-loss, ~1% up overall on this pair of attempts.' },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Revenge / re-entry too many times','Missed structure check'], note:"Tried to re-enter hoping to get more than a minor inducement. Didn't read price or account for how small a move a minor inducement can cause." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Missed structure check'], note:"Didn't check 15 min level structure; a medium inducement occurred within my session and stopped me out. Was in delusion as my zone became part of trend-line liquidity." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Forced trade / anticipated move','Missed structure check'], note:"Learned from winter arc 2 and used trading plan accordingly. Tried to anticipate where a new trend begins from. There was a consolidation build-up I wasn't aware of — got lost in the sauce. Put trade above a zone highly congested to the left. Price took both sides of consolidation (UM) and made its intent clear." },
+    { result:'sl', r:-1, tags:['Valid setup'], fail:['Traded from impulse candle alone'], note:'All confluences and checklist met. Unintentional movement before transitioning to phase 2. Traded from an impulse candle alone, got shortly induced before price went to TP. Valid loss.' },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Invalid setup, invalid approach, no discipline, no actual focus." },
+    { result:'sl', r:-1, tags:['Invalid setup'], fail:['Wrong intention or ego','No discipline','Revenge / re-entry too many times'], note:"Backtested from the wrong intention — negativity, trying to prove the markets wrong. Came with a superior mindset and didn't let price print. Delusional and overanalytical, trying to write my own path on the markets. It proved me wrong many times. Tried to re-enter 4 times, married my strategy. Invalid setup, invalid approach, no discipline, no actual focus." },
+    { result:'be', r:0, tags:['Valid setup'], fail:[], note:'Cleared my mind a bit and confronted the lowly desires and temptations without giving in. Spotted a good setup, secured a breakeven, but had an unrealistic take profit above my session pip range. Breakeven and stop loss.' },
+    { result:'tp', r:1, tags:['Valid setup'], fail:[], note:'17th trade — on notes.' },
+    { result:'tp', r:1, tags:['Valid setup'], fail:[], note:'18th trade — on notes.' },
   ];
   return raw.map((t, i) => ({
     id: i + 1,
@@ -837,6 +936,8 @@ async function loadTrades() {
       trades.forEach(t => {
         if (!t.day) t.day = dayFromDate(t.date);
         if (!t.strategyTags) t.strategyTags = t.strategy ? [t.strategy] : [];
+        if (!t.trend) t.trend = 'Pro Trend';
+        if (t.condition === undefined) t.condition = (t.strategyTags && t.strategyTags.length) ? t.strategyTags.join(' ') : '';
         if (!t.entryModelTags) t.entryModelTags = [];
         if (!t.failTags) t.failTags = [];
         if (t.slHunt === undefined) t.slHunt = false;
@@ -1046,7 +1147,7 @@ function confirmImport() {
     const pnl = parseFloat(r.profit || 0) + parseFloat(r.swap || 0) + parseFloat(r.commission || 0);
     const date = normalizeImportDate(r.date);
     const direction = (r.type || '').toLowerCase().includes('sell') ? 'sell' : 'buy';
-    const result = pnl > 0 ? 'win' : (pnl < 0 ? 'loss' : 'breakeven');
+    const result = pnl > 0 ? 'tp' : (pnl < 0 ? 'sl' : 'be');
     trades.push({
       id: nextId++,
       date, day: dayFromDate(date),
@@ -1206,8 +1307,8 @@ function persistTags() { try { localDB.set(TAGS_KEY, JSON.stringify(savedTags));
 
 function calcStatsFor(list) {
   const total = list.length;
-  const wins = list.filter(t => t.result === 'win');
-  const losses = list.filter(t => t.result === 'loss');
+  const wins = list.filter(t => t.result === 'tp');
+  const losses = list.filter(t => t.result === 'sl');
   const winRate = total > 0 ? (wins.length / total) * 100 : 0;
   const netR = list.reduce((s, t) => s + t.r, 0);
   const avgWin = wins.length ? wins.reduce((s, t) => s + t.r, 0) / wins.length : 0;
@@ -1264,7 +1365,7 @@ function calcByDay(list) {
   return DAYS.map(day => {
     const dayTrades = list.filter(t => t.day === day);
     const total = dayTrades.length;
-    const wins = dayTrades.filter(t => t.result === 'win').length;
+    const wins = dayTrades.filter(t => t.result === 'tp').length;
     const winRate = total > 0 ? (wins / total) * 100 : null;
     const netR = dayTrades.reduce((s, t) => s + t.r, 0);
     return { day, total, winRate, netR };
@@ -1298,7 +1399,7 @@ function groupByTagField(field, list) {
   const groups = {};
   list.forEach(t => { const tags = t[field] && t[field].length ? t[field] : ['Untagged']; tags.forEach(tag => { if (!groups[tag]) groups[tag] = []; groups[tag].push(t); }); });
   return Object.entries(groups).map(([name, l]) => {
-    const total = l.length; const wins = l.filter(t=>t.result==='win').length;
+    const total = l.length; const wins = l.filter(t=>t.result==='tp').length;
     const winRate = total>0 ? (wins/total)*100 : 0; const netR = l.reduce((s,t)=>s+t.r,0);
     return { name, total, winRate, netR };
   }).sort((a,b)=>b.netR-a.netR);
@@ -1307,7 +1408,7 @@ function groupBy(field, list) {
   const groups = {};
   list.forEach(t => { const key=t[field]; if(!groups[key]) groups[key]=[]; groups[key].push(t); });
   return Object.entries(groups).map(([name,l]) => {
-    const total=l.length; const wins=l.filter(t=>t.result==='win').length;
+    const total=l.length; const wins=l.filter(t=>t.result==='tp').length;
     const winRate = total>0 ? (wins/total)*100 : 0; const netR=l.reduce((s,t)=>s+t.r,0);
     return { name, total, winRate, netR };
   }).sort((a,b)=>b.netR-a.netR);
@@ -1327,7 +1428,7 @@ function renderBreakdownList(containerId, groups) {
 
 function calcAttemptBreakdown(list) {
   return ['1st','2nd'].map(attempt => {
-    const l = list.filter(t=>t.attempt===attempt); const total=l.length; const wins=l.filter(t=>t.result==='win').length;
+    const l = list.filter(t=>t.attempt===attempt); const total=l.length; const wins=l.filter(t=>t.result==='tp').length;
     const winRate = total>0 ? (wins/total)*100 : 0; const netR = l.reduce((s,t)=>s+t.r,0);
     return { name: attempt+' attempt', total, winRate, netR };
   });
@@ -1339,10 +1440,10 @@ function renderBreakdownTab() {
   renderBreakdownList('entrymodel-list', groupByTagField('entryModelTags', list));
   renderBreakdownList('entry-list', groupBy('entryType', list));
   renderBreakdownList('attempt-list', calcAttemptBreakdown(list));
-  renderBreakdownList('failtag-list', groupByTagField('failTags', list.filter(t=>t.result==='loss')));
+  renderBreakdownList('failtag-list', groupByTagField('failTags', list.filter(t=>t.result==='sl')));
 
   const slHuntTrades = list.filter(t => t.slHunt);
-  const slHuntLosses = slHuntTrades.filter(t => t.result === 'loss').length;
+  const slHuntLosses = slHuntTrades.filter(t => t.result === 'sl').length;
   const slHuntNetR = slHuntTrades.reduce((s,t) => s+t.r, 0);
   document.getElementById('slhunt-stats').innerHTML = `
     <div class="bt-valid-card"><div class="bt-valid-num amber">${slHuntTrades.length}</div><div class="bt-valid-label">Marked SL hunts</div></div>
@@ -1356,10 +1457,10 @@ function renderFindings() {
   const byStrategy = groupByTagField('strategyTags', list).filter(g=>g.total>=1 && g.name!=='Untagged');
   if (byStrategy.length) { const best=[...byStrategy].sort((a,b)=>b.winRate-a.winRate)[0]; findings.push({icon:'ti-target',color:'purple',text:`Your best strategy/tag is <strong>${best.name}</strong> with a ${best.winRate.toFixed(0)}% win rate over ${best.total} trade${best.total===1?'':'s'}.`}); }
   const secondAttempts = list.filter(t=>t.attempt==='2nd');
-  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='win').length; const rate=(wins/secondAttempts.length)*100; findings.push({icon:'ti-repeat',color:'amber',text:`Your 2nd attempt win rate is <strong>${rate.toFixed(0)}%</strong> across ${secondAttempts.length} re-entr${secondAttempts.length===1?'y':'ies'}.`}); }
+  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='tp').length; const rate=(wins/secondAttempts.length)*100; findings.push({icon:'ti-repeat',color:'amber',text:`Your 2nd attempt win rate is <strong>${rate.toFixed(0)}%</strong> across ${secondAttempts.length} re-entr${secondAttempts.length===1?'y':'ies'}.`}); }
   const byDay = calcByDay(list).filter(d=>d.total>0);
   if (byDay.length) { const bestDay=[...byDay].sort((a,b)=>b.netR-a.netR)[0]; findings.push({icon:'ti-calendar',color:'blue',text:`Your best day of the week is <strong>${bestDay.day}</strong>, with a net result of ${bestDay.netR>=0?'+':''}${bestDay.netR.toFixed(2)}R.`}); }
-  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='loss')).filter(g=>g.name!=='Untagged');
+  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='sl')).filter(g=>g.name!=='Untagged');
   if (byFail.length) { const top=[...byFail].sort((a,b)=>b.total-a.total)[0]; findings.push({icon:'ti-alert-triangle',color:'amber',text:`Your most common reason for losing is <strong>${top.name}</strong>, logged on ${top.total} losing trade${top.total===1?'':'s'}.`}); }
   const validVsInvalid = groupByTagField('strategyTags', list).filter(g=>g.name==='Valid setup'||g.name==='Invalid setup');
   if (validVsInvalid.length===2) {
@@ -1440,7 +1541,7 @@ function renderHeatmap() {
       const cell = list.filter(t => t.day===day && (t.strategyTags && t.strategyTags.length ? t.strategyTags : ['Untagged']).includes(strat));
       if (!cell.length) { html += `<div class="heatmap-cell" style="background:#161822; color:#3a3d4a;">—</div>`; }
       else {
-        const wins = cell.filter(t=>t.result==='win').length; const wr = (wins/cell.length)*100;
+        const wins = cell.filter(t=>t.result==='tp').length; const wr = (wins/cell.length)*100;
         const bg = wr>=75?'#3fd189':wr>=50?'#2a8a63':wr>=25?'#1f5e44':'#1f2937';
         const textColor = wr>=50?'#0a2018':'#d0d2dc';
         html += `<div class="heatmap-cell" style="background:${bg}; color:${textColor};"><div style="font-weight:600;">${wr.toFixed(0)}%</div><div style="font-size:9px; opacity:0.8;">${cell.length}t</div></div>`;
@@ -1496,8 +1597,8 @@ function suggestMantraItems() {
   const list = activeTrades();
   const suggestions = [];
   const secondAttempts = list.filter(t=>t.attempt==='2nd');
-  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='win').length; const rate=(wins/secondAttempts.length)*100; suggestions.push(`Your 2nd attempt wins ${rate.toFixed(0)}% of the time. Be patient after a loss before re-entering.`); }
-  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='loss')).filter(g=>g.name!=='Untagged');
+  if (secondAttempts.length) { const wins=secondAttempts.filter(t=>t.result==='tp').length; const rate=(wins/secondAttempts.length)*100; suggestions.push(`Your 2nd attempt wins ${rate.toFixed(0)}% of the time. Be patient after a loss before re-entering.`); }
+  const byFail = groupByTagField('failTags', list.filter(t=>t.result==='sl')).filter(g=>g.name!=='Untagged');
   if (byFail.length) { const top=[...byFail].sort((a,b)=>b.total-a.total)[0]; suggestions.push(`"${top.name}" is your most logged reason for losing trades. Watch for it before you enter.`); }
   const validVsInvalid = groupByTagField('strategyTags', list).filter(g=>g.name==='Valid setup'||g.name==='Invalid setup');
   if (validVsInvalid.length===2) { const valid=validVsInvalid.find(g=>g.name==='Valid setup'); suggestions.push(`Valid setups win ${valid.winRate.toFixed(0)}% of the time. Don't take a trade unless your full checklist is met.`); }
@@ -1585,9 +1686,9 @@ function renderBacktestTab() {
   else {
     el.innerHTML = keys.map(k => {
       const wlist = groups[k];
-      const wins = wlist.filter(t=>t.result==='win').length;
-      const losses = wlist.filter(t=>t.result==='loss').length;
-      const bes = wlist.filter(t=>t.result==='breakeven').length;
+      const wins = wlist.filter(t=>t.result==='tp').length;
+      const losses = wlist.filter(t=>t.result==='sl').length;
+      const bes = wlist.filter(t=>t.result==='be').length;
       const decided = wins + losses; // win % excludes breakeven from denominator
       const winPct = decided > 0 ? (wins/decided)*100 : 0;
       const netR = wlist.reduce((s,t)=>s+t.r,0);
@@ -1691,7 +1792,7 @@ document.addEventListener('click', function(e) { if (!e.target.closest('.tag-pic
 let editingTradeId = null;
 let autosaveTimer = null;
 let autosaveBound = false;
-const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-pnl','f-linked-account','f-account','f-dir','f-result','f-entrytype','f-attempt','f-newsweek','f-note'];
+const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-pnl','f-linked-account','f-account','f-dir','f-result','f-trend','f-condition','f-entrytype','f-attempt','f-newsweek','f-note'];
 
 function openModal() {
   editingTradeId = null;
@@ -1706,7 +1807,9 @@ function openModal() {
   document.getElementById('f-linked-account').value = '';
   document.getElementById('f-account').value = 'Backtest';
   document.getElementById('f-dir').value = 'buy';
-  document.getElementById('f-result').value = 'win';
+  document.getElementById('f-result').value = 'tp';
+  document.getElementById('f-trend').value = 'Pro Trend';
+  document.getElementById('f-condition').value = '';
   document.getElementById('f-entrytype').value = 'Conservative';
   document.getElementById('f-attempt').value = '1st';
   document.getElementById('f-newsweek').checked = false;
@@ -1733,6 +1836,8 @@ function editTrade(id, evt) {
   document.getElementById('f-account').value = t.account;
   document.getElementById('f-dir').value = t.direction;
   document.getElementById('f-result').value = t.result;
+  document.getElementById('f-trend').value = t.trend || 'Pro Trend';
+  document.getElementById('f-condition').value = t.condition || '';
   document.getElementById('f-entrytype').value = t.entryType;
   document.getElementById('f-attempt').value = t.attempt;
   document.getElementById('f-newsweek').checked = !!t.newsWeek;
@@ -1795,6 +1900,8 @@ function applyEditInPlace() {
     account: document.getElementById('f-account').value,
     direction: document.getElementById('f-dir').value,
     result: document.getElementById('f-result').value,
+    trend: document.getElementById('f-trend').value,
+    condition: document.getElementById('f-condition').value.trim(),
     entryType: document.getElementById('f-entrytype').value,
     attempt: document.getElementById('f-attempt').value,
     newsWeek: document.getElementById('f-newsweek').checked,
@@ -1844,6 +1951,8 @@ function saveTrade() {
   const account = document.getElementById('f-account').value;
   const direction = document.getElementById('f-dir').value;
   const result = document.getElementById('f-result').value;
+  const trend = document.getElementById('f-trend').value;
+  const condition = document.getElementById('f-condition').value.trim();
   const entryType = document.getElementById('f-entrytype').value;
   const attempt = document.getElementById('f-attempt').value;
   const newsWeek = document.getElementById('f-newsweek').checked;
@@ -1856,7 +1965,7 @@ function saveTrade() {
   const slHunt = formSlHunt;
   const wasReady = isReady();
 
-  trades.push({ id: nextId++, date, day, direction, result, r, pnl: isNaN(pnl)?null:pnl, accountId, strategyTags, entryModelTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
+  trades.push({ id: nextId++, date, day, direction, result, trend, condition, r, pnl: isNaN(pnl)?null:pnl, accountId, strategyTags, entryModelTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
 
   closeModal(); render(); setSaving('Saving...'); persistTrades(); setSaving('');
   if (!wasReady && isReady()) {
