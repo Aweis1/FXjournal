@@ -3,13 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#121214">
 <title>Trading Journal</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: #121214; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; color: #f0f1f4; -webkit-font-smoothing: antialiased; min-width: 1180px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; color: #f0f1f4; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 #app { background: #121214; min-height: 100vh; }
+
+.mobile-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #161618; border-bottom: 1px solid #2c2c30; position: sticky; top: 0; z-index: 30; }
+.hamburger-btn { width: 38px; height: 38px; border-radius: 10px; background: #1e1e22; border: 1px solid #34343a; color: #f0f1f4; display: flex; align-items: center; justify-content: center; font-size: 19px; cursor: pointer; flex-shrink: 0; }
+.mobile-topbar-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+.mobile-topbar-spacer { width: 38px; flex-shrink: 0; }
+
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 39; }
+.sidebar-overlay.open { display: block; }
 
 .discipline-banner { text-align: center; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: #d6b8ff; padding: 11px 14px; border-bottom: 1px solid #4a3a5e; background: linear-gradient(90deg, #1a1a1d, #2a1f3d, #1a1a1d); text-transform: uppercase; box-shadow: 0 1px 12px rgba(139,92,246,0.15); }
 
@@ -67,6 +79,52 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .drop-indicator { height: 2px; background: #a855f7; border-radius: 2px; margin: 2px 6px; }
 
 .main-content { flex: 1; min-width: 0; max-width: 1100px; padding: 24px 28px; padding-bottom: 60px; position: relative; }
+
+@media (max-width: 860px) {
+  .mobile-topbar { display: flex; }
+  .discipline-banner { font-size: 10px; padding: 8px 10px; letter-spacing: 0.08em; }
+
+  .layout { display: block; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh; width: 78vw; max-width: 300px;
+    z-index: 40; transform: translateX(-100%); transition: transform 0.22s ease;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-head .sidebar-title { display: none; }
+  .sidebar-close-btn { display: flex !important; margin-left: auto; }
+
+  .main-content { padding: 14px; padding-bottom: 90px; max-width: 100%; }
+
+  .newsweek-bar { flex-wrap: wrap; }
+
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .daysel-row { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .daysel-btn { padding: 8px 1px; font-size: 11px; }
+  .month-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .accounts-grid { grid-template-columns: 1fr; }
+  .trade-grid { grid-template-columns: 1fr; }
+  .account-detail-stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .bt-summary-grid { grid-template-columns: 1fr; }
+  .bt-valid-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .form-row, .form-row3 { grid-template-columns: 1fr; }
+
+  .modal-wrap { padding: 0; align-items: stretch; }
+  .modal { max-width: 100%; width: 100%; height: 100%; border-radius: 0; max-height: 100vh; overflow-y: auto; padding: 16px 14px 90px; }
+  .login-card { width: 92vw; max-width: 360px; padding: 28px 22px; }
+
+  .log-header { flex-wrap: wrap; gap: 10px; }
+  .cal-grid { gap: 4px; }
+  .cal-cell { min-height: 64px; padding: 6px; }
+  .cal-day-pnl { font-size: 11px; }
+
+  .fab { bottom: 18px; right: 18px; width: 52px; height: 52px; font-size: 22px; }
+
+  .tabs-row, .sidebar-tabs { -webkit-overflow-scrolling: touch; }
+  .tab-btn { padding: 12px 11px; font-size: 14px; }
+  .account-pill, .daysel-btn, .log-view-btn { min-height: 36px; }
+}
 
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fadein 0.15s ease; }
@@ -436,11 +494,20 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
 
   <div class="discipline-banner">THE PAIN OF DISCIPLINE OR THE PAIN OF REGRET</div>
 
+  <div class="mobile-topbar">
+    <button class="hamburger-btn" onclick="openMobileSidebar()" aria-label="Open menu"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+    <span class="mobile-topbar-title"><i class="ti ti-chart-candle" aria-hidden="true"></i> Trading journal</span>
+    <span class="mobile-topbar-spacer"></span>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
   <div class="layout">
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-head">
         <i class="ti ti-chart-candle" aria-hidden="true" style="font-size:18px;"></i>
         <span class="sidebar-title">Trading journal</span>
+        <button class="hamburger-btn sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close menu" style="display:none;"><i class="ti ti-x" aria-hidden="true"></i></button>
       </div>
       <div class="sidebar-hint"><i class="ti ti-grip-vertical" aria-hidden="true"></i>Drag to reorder</div>
       <div class="sidebar-tabs" id="tabs-row"></div>
@@ -608,8 +675,8 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
     <div class="log-header">
       <div class="section-label" style="margin:0;">📋 Trades</div>
       <div class="log-view-toggle">
-        <button class="log-view-btn active" data-view="table" onclick="setLogView('table')" title="List view"><i class="ti ti-list" aria-hidden="true"></i></button>
-        <button class="log-view-btn" data-view="grid" onclick="setLogView('grid')" title="Grid view"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
+        <button class="log-view-btn" data-view="table" onclick="setLogView('table')" title="List view"><i class="ti ti-list" aria-hidden="true"></i></button>
+        <button class="log-view-btn active" data-view="grid" onclick="setLogView('grid')" title="Grid view"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
         <button class="log-view-btn" data-view="calendar" onclick="setLogView('calendar')" title="Calendar view"><i class="ti ti-calendar" aria-hidden="true"></i></button>
       </div>
     </div>
@@ -618,13 +685,13 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <input type="file" id="mt5-csv-input" accept=".csv" style="display:none;" onchange="handleMt5CsvSelected(event)">
     </div>
 
-    <div class="log-view-panel active" id="log-view-table">
+    <div class="log-view-panel" id="log-view-table">
       <div class="trade-table-wrap">
         <table class="trade-table" id="trade-table"></table>
       </div>
     </div>
 
-    <div class="log-view-panel" id="log-view-grid">
+    <div class="log-view-panel active" id="log-view-grid">
       <div class="trade-grid" id="trade-grid"></div>
     </div>
 
@@ -1244,6 +1311,15 @@ function onTabDragEnd(e) {
   dragSourceTab = null;
 }
 
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
 function switchTab(tab) {
   activeTabId = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -1255,6 +1331,7 @@ function switchTab(tab) {
   if (tab === 'simlab') { renderProgressBar('sim'); renderSimEquityChart(); }
   if (tab === 'backtest') { renderProgressBar('backtest'); renderBacktestTab(); }
   if (tab === 'accounts') { renderAccountsTab(); }
+  closeMobileSidebar();
 }
 
 function toggleNewsWeek() {
@@ -2100,7 +2177,7 @@ function renderBacktestTab() {
 
 function formatDate(d) { const [y,m,day]=d.split('-'); const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`; }
 
-let currentLogView = 'table';
+let currentLogView = 'grid';
 let calMonthCursor = new Date();
 calMonthCursor.setDate(1);
 
