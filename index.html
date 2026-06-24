@@ -20,7 +20,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .sidebar-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
 .sidebar-hint { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #4a4d60; padding: 0 8px 10px; text-transform: uppercase; letter-spacing: 0.05em; }
 .sidebar-tabs { display: flex; flex-direction: column; gap: 3px; flex: 1; }
-.sidebar-sync { padding: 12px 8px 0; }
+.sidebar-sync { padding: 12px 8px 0; display: flex; flex-direction: column; gap: 8px; }
+.cloud-sync-btn { display: flex; align-items: center; gap: 7px; width: 100%; padding: 9px 10px; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; color: #8d90a0; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.12s, color 0.12s; }
+.cloud-sync-btn:hover { border-color: #8b5cf6; color: #d6b8ff; }
+.cloud-sync-btn.synced { background: #1a1a2e; border-color: #4a3a5e; color: #c9a4ff; }
+.cloud-sync-btn.syncing i { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.sync-modal-section { margin-bottom: 16px; }
+.sync-modal-section p { font-size: 12.5px; color: #9a9eb0; line-height: 1.55; margin-bottom: 10px; }
+.sync-modal-section strong { color: #d6b8ff; }
+.sync-status-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; font-size: 12.5px; color: #c6c8d6; margin-bottom: 14px; }
+.sync-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4a4d60; flex-shrink: 0; }
+.sync-status-dot.on { background: #34e29a; box-shadow: 0 0 6px rgba(52,226,154,0.5); }
+.sync-status-dot.error { background: #ff6b66; }
+.sync-warning { font-size: 11.5px; color: #ffb547; background: #2f2510; border: 1px solid #5a4520; border-radius: 9px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.5; }
+.setup-toggle { font-size: 11.5px; color: #8d90a0; cursor: pointer; text-decoration: underline; margin-bottom: 12px; display: inline-block; }
+.setup-block { display: none; background: #15151a; border: 1px solid #28282c; border-radius: 10px; padding: 14px; margin-bottom: 14px; font-size: 12px; color: #9a9eb0; line-height: 1.6; }
+.setup-block.open { display: block; }
+.setup-block ol { margin: 8px 0 8px 18px; }
+.setup-block code { background: #24242a; padding: 2px 6px; border-radius: 4px; color: #d6b8ff; font-size: 11.5px; }
 
 .tab-btn { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 10px 11px; border-radius: 10px; font-size: 13.5px; font-weight: 500; color: #8d90a0; cursor: pointer; border: none; background: transparent; font-family: inherit; position: relative; transition: background 0.12s, color 0.12s; }
 .tab-btn.active { background: linear-gradient(135deg, #4a3a5e, #362a48); color: #ffffff; box-shadow: inset 0 0 0 1px #8b5cf6, inset 0 1px 0 rgba(255,255,255,0.08), 0 0 16px rgba(139,92,246,0.25); }
@@ -397,6 +416,10 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="sidebar-tabs" id="tabs-row"></div>
       <div class="sidebar-sync">
         <span class="sync-badge sync-ok" id="sync-badge">Saved locally</span>
+        <button class="cloud-sync-btn" id="cloud-sync-btn" onclick="openSyncModal()">
+          <i class="ti ti-cloud" aria-hidden="true"></i>
+          <span id="cloud-sync-label">☁️ Set up cloud sync</span>
+        </button>
       </div>
     </nav>
 
@@ -701,7 +724,49 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 </div>
 
+<div class="modal-wrap" id="sync-modal-wrap">
+  <div class="modal" style="max-width:560px;">
+    <h2>☁️ Cloud sync</h2>
+
+    <div class="sync-status-row">
+      <span class="sync-status-dot" id="sync-status-dot"></span>
+      <span id="sync-status-text">Not connected — set this up once below, then enter a passphrase.</span>
+    </div>
+
+    <div class="sync-modal-section">
+      <p>Sync works with a <strong>passphrase only you know</strong> — no email, no password reset. Anyone who enters the same passphrase on any device gets the same data. There's no way to recover a forgotten passphrase, so write it down somewhere safe.</p>
+    </div>
+
+    <span class="setup-toggle" onclick="toggleSetupBlock()">⚙️ One-time setup (only needed once, on any device) ▾</span>
+    <div class="setup-block" id="setup-block">
+      <strong>Step 1 — create a free Supabase project</strong>
+      <ol>
+        <li>Go to <code>supabase.com</code> → sign up free → "New project".</li>
+        <li>Once it's ready, go to <strong>Project Settings → API</strong>.</li>
+        <li>Copy the <strong>Project URL</strong> and the <strong>anon public key</strong>.</li>
+      </ol>
+      <strong>Step 2 — create the data table</strong>
+      <p style="margin:6px 0;">In Supabase: <strong>SQL Editor → New query</strong>, paste the contents of <code>supabase_setup.sql</code> (included with this app's files), and click Run.</p>
+      <strong>Step 3 — paste your values below</strong>
+      <div class="form-group" style="margin-top:10px;"><label>Supabase Project URL</label><input type="text" id="supabase-url-input" placeholder="https://xxxxx.supabase.co"></div>
+      <div class="form-group"><label>Supabase anon public key</label><input type="text" id="supabase-key-input" placeholder="eyJhbGciOi..."></div>
+      <button class="btn-save" style="width:100%;" onclick="saveSupabaseConfig()">Save connection settings</button>
+    </div>
+
+    <div class="form-group">
+      <label>Your sync passphrase</label>
+      <input type="password" id="sync-passphrase-input" placeholder="Choose or enter your passphrase">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSyncModal()">Close</button>
+      <button class="btn-save" onclick="connectSync()">Connect &amp; sync now</button>
+    </div>
+    <div class="reset-note" id="sync-last-synced"></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* ============================================================
    STORAGE — browser localStorage (per device/browser only)
@@ -716,6 +781,7 @@ const MANTRA_KEY = 'trading-journal-mantra-v1';
 const TAGS_KEY = 'trading-journal-tags-v2';
 const GOALS_KEY = 'trading-journal-goals-v1';
 const ACCOUNTS_KEY = 'trading-journal-accounts-v1';
+const SYNC_CONFIG_KEY = 'trading-journal-sync-config-v1';
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 const MIN_WIN_RATE = 50;
 let goals = { sim: 20, backtest: 20 };
@@ -723,6 +789,248 @@ let accounts = [];
 let nextAccountId = 1;
 let editingAccountId = null;
 let selectedDetailAccountId = null;
+
+/* ============================================================
+   CLOUD SYNC (Supabase) — optional, off by default.
+   Connection settings (URL + anon key) are stored in this
+   browser's localStorage only — they are not secret in the
+   sense of granting special access, but you still shouldn't
+   share your anon key publicly outside your own app.
+   The PASSPHRASE is what actually controls which cloud row you
+   read/write — it's hashed client-side into a sync_id so the
+   raw passphrase itself is never sent anywhere.
+   ============================================================ */
+let syncConfig = { url: '', key: '', passphrase: '', lastSyncedAt: null };
+let supabaseClient = null;
+let syncInFlight = false;
+let syncPushTimer = null;
+
+function loadSyncConfig() {
+  try {
+    const r = localDB.get(SYNC_CONFIG_KEY);
+    if (r && r.value) syncConfig = JSON.parse(r.value);
+  } catch (e) {}
+  if (syncConfig.url && syncConfig.key) initSupabaseClient();
+  if (syncConfig.url && syncConfig.key && syncConfig.passphrase) startCloudPolling();
+  updateSyncButtonUI();
+}
+function persistSyncConfig() { try { localDB.set(SYNC_CONFIG_KEY, JSON.stringify(syncConfig)); } catch (e) {} }
+
+function initSupabaseClient() {
+  try {
+    supabaseClient = window.supabase.createClient(syncConfig.url, syncConfig.key);
+  } catch (e) { supabaseClient = null; }
+}
+
+// Simple, deterministic client-side hash (SHA-256 via Web Crypto) of the
+// passphrase, used only as a lookup key — never stored or sent in plain text.
+async function hashPassphrase(pass) {
+  const enc = new TextEncoder().encode('tj-sync-v1:' + pass);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function openSyncModal() {
+  document.getElementById('supabase-url-input').value = syncConfig.url || '';
+  document.getElementById('supabase-key-input').value = syncConfig.key || '';
+  document.getElementById('sync-passphrase-input').value = syncConfig.passphrase || '';
+  document.getElementById('setup-block').classList.toggle('open', !(syncConfig.url && syncConfig.key));
+  updateSyncStatusRow();
+  document.getElementById('sync-modal-wrap').classList.add('open');
+}
+function closeSyncModal() { document.getElementById('sync-modal-wrap').classList.remove('open'); }
+function toggleSetupBlock() { document.getElementById('setup-block').classList.toggle('open'); }
+
+function saveSupabaseConfig() {
+  const url = document.getElementById('supabase-url-input').value.trim();
+  const key = document.getElementById('supabase-key-input').value.trim();
+  if (!url || !key) { alert('Please paste both the Project URL and the anon public key.'); return; }
+  syncConfig.url = url; syncConfig.key = key;
+  persistSyncConfig();
+  initSupabaseClient();
+  updateSyncStatusRow();
+  alert('Connection settings saved. Now enter a passphrase below and click "Connect & sync now".');
+}
+
+function updateSyncStatusRow() {
+  const dot = document.getElementById('sync-status-dot');
+  const text = document.getElementById('sync-status-text');
+  if (!syncConfig.url || !syncConfig.key) {
+    dot.className = 'sync-status-dot'; text.textContent = 'Not connected — complete the one-time setup below first.';
+  } else if (!syncConfig.passphrase) {
+    dot.className = 'sync-status-dot'; text.textContent = 'Connected to Supabase — enter a passphrase to start syncing.';
+  } else {
+    dot.className = 'sync-status-dot on'; text.textContent = `Syncing with passphrase-linked cloud storage.`;
+  }
+  const lastEl = document.getElementById('sync-last-synced');
+  if (lastEl) lastEl.textContent = syncConfig.lastSyncedAt ? `Last synced: ${new Date(syncConfig.lastSyncedAt).toLocaleString()}` : '';
+}
+
+function updateSyncButtonUI() {
+  const btn = document.getElementById('cloud-sync-btn');
+  const label = document.getElementById('cloud-sync-label');
+  if (!btn || !label) return;
+  if (syncConfig.url && syncConfig.key && syncConfig.passphrase) {
+    btn.classList.add('synced'); label.textContent = '☁️ Cloud sync on';
+  } else {
+    btn.classList.remove('synced'); label.textContent = '☁️ Set up cloud sync';
+  }
+}
+
+function collectFullState() {
+  return {
+    trades, nextId,
+    mantraState,
+    savedTags,
+    goals,
+    accounts, nextAccountId,
+    tabOrder
+  };
+}
+
+function applyFullState(state) {
+  if (!state) return;
+  if (state.trades) { trades = state.trades; nextId = state.nextId || (trades.length ? Math.max(...trades.map(t=>t.id))+1 : 1); }
+  if (state.mantraState) mantraState = state.mantraState;
+  if (state.savedTags) savedTags = state.savedTags;
+  if (state.goals) goals = state.goals;
+  if (state.accounts) { accounts = state.accounts; nextAccountId = state.nextAccountId || (accounts.length ? Math.max(...accounts.map(a=>a.id))+1 : 1); }
+  if (state.tabOrder) tabOrder = state.tabOrder;
+}
+
+// Merge cloud + local trades/accounts by id, preferring whichever
+// side has the trade/account (used only on the very first connect
+// for a given device, so existing local data isn't silently dropped).
+function mergeStates(local, cloud) {
+  const merged = { ...cloud };
+  const cloudTradeIds = new Set((cloud.trades||[]).map(t => t.id));
+  const localOnlyTrades = (local.trades||[]).filter(t => !cloudTradeIds.has(t.id));
+  merged.trades = [...(cloud.trades||[]), ...localOnlyTrades];
+  merged.nextId = Math.max(local.nextId||1, cloud.nextId||1, merged.trades.length ? Math.max(...merged.trades.map(t=>t.id))+1 : 1);
+
+  const cloudAccIds = new Set((cloud.accounts||[]).map(a => a.id));
+  const localOnlyAccs = (local.accounts||[]).filter(a => !cloudAccIds.has(a.id));
+  merged.accounts = [...(cloud.accounts||[]), ...localOnlyAccs];
+  merged.nextAccountId = Math.max(local.nextAccountId||1, cloud.nextAccountId||1, merged.accounts.length ? Math.max(...merged.accounts.map(a=>a.id))+1 : 1);
+
+  // Mantra items: merge by text (dedupe), keep cloud checkmarks as base
+  const cloudMantraTexts = new Set((cloud.mantraState?.items||[]).map(i => i.text));
+  const localOnlyMantra = (local.mantraState?.items||[]).filter(i => !cloudMantraTexts.has(i.text));
+  merged.mantraState = cloud.mantraState ? { ...cloud.mantraState } : { date: null, checked: {}, items: [], nextMantraId: 1 };
+  merged.mantraState.items = [...(cloud.mantraState?.items||[]), ...localOnlyMantra.map(i => ({...i, id: (merged.mantraState.nextMantraId||1)}))];
+  let nid = merged.mantraState.nextMantraId || 1;
+  merged.mantraState.items = merged.mantraState.items.map(i => { const withId = { ...i, id: i.id || nid }; nid = Math.max(nid, withId.id+1); return withId; });
+  merged.mantraState.nextMantraId = nid;
+
+  // Tags: union of both tag lists per category
+  merged.savedTags = { ...local.savedTags, ...cloud.savedTags };
+  Object.keys(local.savedTags||{}).forEach(k => {
+    merged.savedTags[k] = [...new Set([...(cloud.savedTags?.[k]||[]), ...(local.savedTags?.[k]||[])])];
+  });
+
+  merged.goals = cloud.goals || local.goals;
+  merged.tabOrder = cloud.tabOrder || local.tabOrder;
+  return merged;
+}
+
+async function connectSync() {
+  const url = document.getElementById('supabase-url-input').value.trim();
+  const key = document.getElementById('supabase-key-input').value.trim();
+  const pass = document.getElementById('sync-passphrase-input').value;
+  if (url && key && (url !== syncConfig.url || key !== syncConfig.key)) {
+    syncConfig.url = url; syncConfig.key = key; persistSyncConfig(); initSupabaseClient();
+  }
+  if (!syncConfig.url || !syncConfig.key) { alert('Please complete the one-time setup first (paste your Supabase URL and key).'); return; }
+  if (!pass || pass.trim().length < 4) { alert('Please enter a passphrase of at least 4 characters.'); return; }
+  if (!supabaseClient) { alert('Could not connect to Supabase. Double-check your URL and key.'); return; }
+
+  syncConfig.passphrase = pass;
+  persistSyncConfig();
+
+  const dot = document.getElementById('sync-status-dot');
+  const text = document.getElementById('sync-status-text');
+  dot.className = 'sync-status-dot'; text.textContent = 'Connecting...';
+
+  try {
+    const syncId = await hashPassphrase(pass);
+    const { data, error } = await supabaseClient.from('journal_sync').select('data').eq('sync_id', syncId).maybeSingle();
+    if (error) throw error;
+
+    const localState = collectFullState();
+
+    if (data && data.data) {
+      // Cloud already has data for this passphrase — merge with local
+      const merged = mergeStates(localState, data.data);
+      applyFullState(merged);
+      await pushSyncState();
+      alert('✅ Synced! Your local trades were merged with what was already in the cloud for this passphrase.');
+    } else {
+      // Nothing in the cloud yet for this passphrase — push local up as the starting point
+      await supabaseClient.from('journal_sync').upsert({ sync_id: syncId, data: localState });
+      alert('✅ Cloud sync connected! Your current data is now the starting point in the cloud.');
+    }
+
+    syncConfig.lastSyncedAt = new Date().toISOString();
+    persistSyncConfig();
+    updateSyncStatusRow();
+    updateSyncButtonUI();
+    startCloudPolling();
+    render();
+    closeSyncModal();
+  } catch (e) {
+    dot.className = 'sync-status-dot error'; text.textContent = 'Sync failed: ' + (e.message || 'unknown error');
+  }
+}
+
+async function pushSyncState() {
+  if (!supabaseClient || !syncConfig.passphrase || syncInFlight) return;
+  syncInFlight = true;
+  try {
+    const syncId = await hashPassphrase(syncConfig.passphrase);
+    await supabaseClient.from('journal_sync').upsert({ sync_id: syncId, data: collectFullState() });
+    syncConfig.lastSyncedAt = new Date().toISOString();
+    persistSyncConfig();
+  } catch (e) {
+    console.warn('Cloud sync push failed:', e.message);
+  } finally {
+    syncInFlight = false;
+  }
+}
+
+// Debounced auto-push: call this from existing persist*() functions
+// so every local save also queues a cloud push, without hammering
+// the API on rapid successive edits (e.g. typing in a note).
+function queueCloudPush() {
+  if (!supabaseClient || !syncConfig.passphrase) return;
+  clearTimeout(syncPushTimer);
+  syncPushTimer = setTimeout(pushSyncState, 1200);
+}
+
+// Periodically pull from the cloud so edits made on another device
+// (e.g. your phone) show up here without needing a manual refresh.
+// Only pulls if nothing is pending to push, to avoid clobbering
+// an in-progress local edit with a stale cloud copy.
+let cloudPollInterval = null;
+async function pullSyncState() {
+  if (!supabaseClient || !syncConfig.passphrase || syncInFlight) return;
+  try {
+    const syncId = await hashPassphrase(syncConfig.passphrase);
+    const { data, error } = await supabaseClient.from('journal_sync').select('data, updated_at').eq('sync_id', syncId).maybeSingle();
+    if (error || !data) return;
+    const remoteTime = new Date(data.updated_at).getTime();
+    const localTime = syncConfig.lastSyncedAt ? new Date(syncConfig.lastSyncedAt).getTime() : 0;
+    if (remoteTime > localTime + 2000) {
+      applyFullState(data.data);
+      syncConfig.lastSyncedAt = new Date().toISOString();
+      persistSyncConfig();
+      render();
+    }
+  } catch (e) { /* silent — pull is best-effort */ }
+}
+function startCloudPolling() {
+  if (cloudPollInterval) clearInterval(cloudPollInterval);
+  cloudPollInterval = setInterval(pullSyncState, 15000);
+}
 let trades = [];
 let nextId = 1;
 let expandedId = null;
@@ -819,7 +1127,7 @@ function loadTabOrder() {
     }
   } catch (e) {}
 }
-function persistTabOrder() { try { localDB.set(TAB_ORDER_KEY, JSON.stringify(tabOrder)); } catch (e) {} }
+function persistTabOrder() { try { localDB.set(TAB_ORDER_KEY, JSON.stringify(tabOrder)); } catch (e) {} queueCloudPush(); }
 
 function renderSidebarTabs() {
   const container = document.getElementById('tabs-row');
@@ -989,7 +1297,7 @@ async function loadTrades() {
   render();
 }
 
-function persistGoals() { try { localDB.set(GOALS_KEY, JSON.stringify(goals)); } catch (e) {} }
+function persistGoals() { try { localDB.set(GOALS_KEY, JSON.stringify(goals)); } catch (e) {} queueCloudPush(); }
 
 function updateGoal(kind, val) {
   const n = parseInt(val, 10);
@@ -1000,7 +1308,7 @@ function updateGoal(kind, val) {
   render();
 }
 
-function persistTrades() { try { localDB.set(STORAGE_KEY, JSON.stringify({ trades, nextId })); setSyncBadge('ok', 'Saved locally'); } catch (e) { setSyncBadge('err', 'Save failed'); } }
+function persistTrades() { try { localDB.set(STORAGE_KEY, JSON.stringify({ trades, nextId })); setSyncBadge('ok', 'Saved locally'); } catch (e) { setSyncBadge('err', 'Save failed'); } queueCloudPush(); }
 
 /* ============================================================
    ACCOUNT MANAGEMENT — Demo / Prop Firm / Live
@@ -1020,7 +1328,7 @@ function loadAccounts() {
   } catch (e) {}
   if (accounts.length && selectedDetailAccountId === null) selectedDetailAccountId = accounts[0].id;
 }
-function persistAccounts() { try { localDB.set(ACCOUNTS_KEY, JSON.stringify({ accounts, nextAccountId })); } catch (e) {} }
+function persistAccounts() { try { localDB.set(ACCOUNTS_KEY, JSON.stringify({ accounts, nextAccountId })); } catch (e) {} queueCloudPush(); }
 
 function openAccountModal() {
   editingAccountId = null;
@@ -1302,8 +1610,8 @@ function renderAccountsTab() {
   renderAccountDetailPicker();
   renderAccountDetailPanel();
 }
-function persistMantra() { try { localDB.set(MANTRA_KEY, JSON.stringify(mantraState)); } catch (e) {} }
-function persistTags() { try { localDB.set(TAGS_KEY, JSON.stringify(savedTags)); } catch (e) {} }
+function persistMantra() { try { localDB.set(MANTRA_KEY, JSON.stringify(mantraState)); } catch (e) {} queueCloudPush(); }
+function persistTags() { try { localDB.set(TAGS_KEY, JSON.stringify(savedTags)); } catch (e) {} queueCloudPush(); }
 
 function calcStatsFor(list) {
   const total = list.length;
@@ -1709,48 +2017,153 @@ function renderBacktestTab() {
 
 function formatDate(d) { const [y,m,day]=d.split('-'); const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`; }
 
+let currentLogView = 'table';
+let calMonthCursor = new Date();
+calMonthCursor.setDate(1);
+
+function setLogView(view) {
+  currentLogView = view;
+  document.querySelectorAll('.log-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.log-view-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('log-view-' + view).classList.add('active');
+  if (view === 'table') renderTradeTable();
+  if (view === 'grid') renderTradeGrid();
+  if (view === 'calendar') renderTradeCalendar();
+}
+
+function pnlOrR(t) {
+  // Prefer dollar P&L when present, otherwise fall back to R for display purposes
+  if (t.pnl !== undefined && t.pnl !== null) return { value: t.pnl, isDollar: true };
+  return { value: t.r, isDollar: false };
+}
+function formatPnl(t) {
+  const { value, isDollar } = pnlOrR(t);
+  const sign = value > 0 ? '+' : '';
+  return isDollar ? `${sign}$${value.toFixed(2)}` : `${sign}${value.toFixed(2)}R`;
+}
+function pnlColorClass(t) {
+  const { value } = pnlOrR(t);
+  return value > 0 ? 'r-pos' : (value < 0 ? 'r-neg' : 'r-zero');
+}
+
+function accountNameFor(t) {
+  if (t.accountId) {
+    const acc = accounts.find(a => a.id === t.accountId);
+    if (acc) return acc.name;
+  }
+  return t.account || '—';
+}
+
 function renderTrades() {
-  const list = document.getElementById('trade-list');
-  const data = activeTrades();
-  if (!data.length) { list.innerHTML = '<div class="empty-msg">No trades yet. Tap the plus button to log your first one!</div>'; return; }
-  list.innerHTML = [...data].reverse().map(t => {
-    const sign = t.r > 0 ? '+' : (t.r < 0 ? '' : '');
-    const rClass = t.r > 0 ? 'r-pos' : (t.r < 0 ? 'r-neg' : 'r-zero');
-    const isExpanded = expandedId === t.id;
-    const stratBadges = (t.strategyTags||[]).map(s => `<span class="badge ${s==='Valid setup'?'badge-valid':s==='Invalid setup'?'badge-invalid':'badge-strategy'}">${s}</span>`).join('');
-    const entryModelBadges = (t.entryModelTags||[]).map(s => `<span class="badge badge-entrymodel">${s}</span>`).join('');
-    const failBadges = (t.failTags||[]).map(f => `<span class="badge badge-fail">${f}</span>`).join('');
-    const slHuntBadge = t.slHunt ? '<span class="badge badge-slhunt"><i class="ti ti-target-arrow" aria-hidden="true" style="font-size:10px;vertical-align:-1px;"></i> SL hunt</span>' : '';
-    const accountClass = t.account==='Sim'?'sim':t.account==='Live'?'live':'backtest';
-    return `<div class="trade-card ${isExpanded?'expanded':''}" onclick="toggleExpand(${t.id})">
-      <div class="trade-row1">
-        <span class="trade-num">#${t.id}</span>
-        <span style="display:flex; align-items:center; gap:2px;">
-          <button class="edit-btn" onclick="editTrade(${t.id}, event)" aria-label="Edit trade ${t.id}"><i class="ti ti-pencil" aria-hidden="true"></i></button>
-          <button class="delete-btn" onclick="deleteTrade(${t.id}, event)" aria-label="Delete trade ${t.id}"><i class="ti ti-trash" aria-hidden="true"></i></button>
-        </span>
-        <span class="trade-date">${formatDate(t.date)}</span>
+  if (currentLogView === 'table') renderTradeTable();
+  else if (currentLogView === 'grid') renderTradeGrid();
+  else renderTradeCalendar();
+}
+
+/* ---------- TABLE VIEW (matches screenshot column layout) ---------- */
+function renderTradeTable() {
+  const table = document.getElementById('trade-table');
+  const data = [...activeTrades()].reverse();
+  if (!data.length) { table.innerHTML = '<tr><td class="tt-empty-cell" style="padding:30px; text-align:center;">No trades yet. Tap the plus button to log your first one!</td></tr>'; return; }
+
+  const statusLabel = { tp: '🟢 T/P', sl: '🔴 S/L', be: '🟡 B/E' };
+
+  table.innerHTML = `
+    <tr>
+      <th>Date</th><th>Pair</th><th>Trade type</th><th>Status</th><th>Account</th><th>Trend</th><th>Condition</th><th>Confluences</th><th>Net P&amp;L</th><th>Actions</th>
+    </tr>` +
+    data.map(t => {
+      const confluences = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip">${c}</span>`).join('') || '<span class="tt-empty-cell">—</span>';
+      const trendClass = t.trend === 'Counter Trend' ? 'tt-trend-counter' : 'tt-trend-pro';
+      return `<tr class="row-${t.result}" onclick="editTrade(${t.id}, event)" style="cursor:pointer;">
+        <td class="tt-date">${formatDate(t.date)}</td>
+        <td class="tt-pair">${t.mt5Symbol || t.condition?.split(' ')[0] || '—'}</td>
+        <td><span class="tt-dir"><i class="ti ${t.direction==='buy'?'ti-arrow-up':'ti-arrow-down'}" aria-hidden="true"></i> ${t.direction==='buy'?'Long':'Short'}</span></td>
+        <td><span class="tt-status tt-status-${t.result}">${statusLabel[t.result]}</span></td>
+        <td><span class="tt-account"><span class="tt-account-bar"></span>${accountNameFor(t)}</span></td>
+        <td><span class="tt-trend ${trendClass}">${t.trend || 'Pro Trend'}</span></td>
+        <td class="tt-condition">${t.condition || '<span class="tt-empty-cell">—</span>'}</td>
+        <td><div class="tt-confluences">${confluences}</div></td>
+        <td class="tt-pnl ${pnlColorClass(t)}">${formatPnl(t)}</td>
+        <td><button class="tt-actions-btn" onclick="deleteTrade(${t.id}, event)" aria-label="Delete trade ${t.id}"><i class="ti ti-x" aria-hidden="true"></i></button></td>
+      </tr>`;
+    }).join('');
+}
+
+/* ---------- GRID VIEW ---------- */
+function renderTradeGrid() {
+  const grid = document.getElementById('trade-grid');
+  const data = [...activeTrades()].reverse();
+  if (!data.length) { grid.innerHTML = '<div class="empty-msg">No trades yet. Tap the plus button to log your first one!</div>'; return; }
+  const statusLabel = { tp: '🟢 T/P', sl: '🔴 S/L', be: '🟡 B/E' };
+  grid.innerHTML = data.map(t => {
+    const confluences = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip">${c}</span>`).join('');
+    const trendClass = t.trend === 'Counter Trend' ? 'tt-trend-counter' : 'tt-trend-pro';
+    return `<div class="tg-card row-${t.result}" onclick="editTrade(${t.id}, event)">
+      <div class="tg-head">
+        <div><div class="tg-pair">${t.mt5Symbol || t.condition?.split(' ')[0] || '—'}</div><div class="tg-date">${formatDate(t.date)} · ${accountNameFor(t)}</div></div>
+        <div class="tg-pnl ${pnlColorClass(t)}">${formatPnl(t)}</div>
       </div>
-      <div class="trade-row2"><div class="badges-row">
-        <span class="badge badge-${accountClass}">${t.account}</span>
-        <span class="badge badge-${t.direction}">${t.direction}</span>
-        <span class="badge badge-${t.result}">${t.result}</span>
-        <span class="badge badge-day">${t.day}</span>
-        ${stratBadges}
-        ${entryModelBadges}
-        <span class="badge badge-entry">${t.entryType}</span>
-        <span class="badge badge-attempt">${t.attempt}</span>
-        ${t.newsWeek?'<span class="badge badge-news">News week</span>':''}
-        ${slHuntBadge}
-        ${failBadges}
-      </div></div>
-      <div class="trade-row2"><span></span><span style="display:flex;align-items:center;gap:8px;">
-        <span class="r-outcome ${rClass}">${sign}${t.r.toFixed(2)}R</span>
-        <i class="ti ti-chevron-down expand-hint" aria-hidden="true"></i>
-      </span></div>
-      ${t.note?`<div class="trade-note-preview">${t.note}</div><div class="trade-note-full">${t.note}</div>`:''}
+      <div class="tg-badges">
+        <span class="tt-status tt-status-${t.result}">${statusLabel[t.result]}</span>
+        <span class="tt-dir" style="background:#24242a; padding:4px 9px; border-radius:7px;"><i class="ti ${t.direction==='buy'?'ti-arrow-up':'ti-arrow-down'}" aria-hidden="true"></i> ${t.direction==='buy'?'Long':'Short'}</span>
+        <span class="tt-trend ${trendClass}">${t.trend || 'Pro Trend'}</span>
+      </div>
+      ${t.condition ? `<div class="tg-condition">${t.condition}</div>` : ''}
+      ${confluences ? `<div class="tg-confluences">${confluences}</div>` : ''}
     </div>`;
   }).join('');
+}
+
+/* ---------- CALENDAR VIEW ---------- */
+function shiftCalMonth(delta) {
+  calMonthCursor.setMonth(calMonthCursor.getMonth() + delta);
+  renderTradeCalendar();
+}
+
+function renderTradeCalendar() {
+  const data = activeTrades();
+  const year = calMonthCursor.getFullYear();
+  const month = calMonthCursor.getMonth();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = `${monthNames[month]} ${year}`;
+
+  const byDate = {};
+  data.forEach(t => { if (!byDate[t.date]) byDate[t.date] = []; byDate[t.date].push(t); });
+
+  const firstOfMonth = new Date(year, month, 1);
+  const startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const dows = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let html = dows.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i = 0; i < startOffset; i++) html += '<div class="cal-cell empty"></div>';
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayTrades = byDate[dateStr] || [];
+    if (!dayTrades.length) {
+      html += `<div class="cal-cell"><div class="cal-daynum">${day}</div></div>`;
+    } else {
+      const netVal = dayTrades.reduce((s,t) => { const {value} = pnlOrR(t); return s + value; }, 0);
+      const isDollar = dayTrades.some(t => t.pnl !== undefined && t.pnl !== null);
+      const sign = netVal >= 0 ? '+' : '';
+      const display = isDollar ? `${sign}$${netVal.toFixed(0)}` : `${sign}${netVal.toFixed(1)}R`;
+      html += `<div class="cal-cell has-trades" onclick="showCalDayTrades('${dateStr}')">
+        <div class="cal-daynum">${day}</div>
+        <div class="cal-day-pnl ${netVal>=0?'r-pos':'r-neg'}">${display}</div>
+        <div class="cal-day-count">${dayTrades.length} trade${dayTrades.length===1?'':'s'}</div>
+      </div>`;
+    }
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function showCalDayTrades(dateStr) {
+  const dayTrades = activeTrades().filter(t => t.date === dateStr);
+  if (!dayTrades.length) return;
+  const lines = dayTrades.map(t => `#${t.id} ${t.mt5Symbol||t.condition||''} — ${t.result.toUpperCase()} ${formatPnl(t)}`).join('\n');
+  alert(`Trades on ${formatDate(dateStr)}:\n\n${lines}\n\nSwitch to List or Grid view, or open Trade Log to edit individual trades.`);
 }
 
 function render() {
@@ -1975,12 +2388,14 @@ function saveTrade() {
 document.getElementById('modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
 document.getElementById('account-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeAccountModal(); });
 document.getElementById('import-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeImportModal(); });
+document.getElementById('sync-modal-wrap').addEventListener('click', function(e) { if (e.target===this) closeSyncModal(); });
 
 loadTabOrder();
 renderSidebarTabs();
 loadAccounts();
 loadTrades();
 populateLinkedAccountOptions();
+loadSyncConfig();
 </script>
 </body>
 </html>
