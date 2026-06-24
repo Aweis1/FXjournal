@@ -27,6 +27,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .cloud-sync-btn.syncing i { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+.logged-in-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 4px 0; }
+.logged-in-email { font-size: 11px; color: #767a8c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.logout-btn { background: none; border: none; color: #3e4154; cursor: pointer; font-size: 15px; padding: 4px; flex-shrink: 0; }
+.logout-btn:hover { color: #ff6b66; }
+
+.login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #07080c; }
+.login-card { width: 380px; background: linear-gradient(155deg, #1f1f23, #161618); border: 1px solid #34343a; border-radius: 18px; padding: 36px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.login-icon { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(145deg, #7c3aed, #5b21b6); display: flex; align-items: center; justify-content: center; font-size: 26px; color: #f3e8ff; margin: 0 auto 18px; box-shadow: 0 6px 20px rgba(168,85,247,0.3); }
+.login-title { font-size: 19px; font-weight: 700; color: #f0f1f4; margin-bottom: 4px; }
+.login-sub { font-size: 12.5px; color: #9a9eb0; margin-bottom: 24px; }
+.login-card .form-group { text-align: left; margin-bottom: 14px; }
+.login-btn { width: 100%; margin-top: 6px; }
+.login-error { font-size: 12px; color: #ff6b66; background: #2e1414; border: 1px solid #5a2020; border-radius: 8px; padding: 9px 12px; margin-top: 14px; }
+.login-loading { font-size: 12px; color: #9a9eb0; margin-top: 14px; }
+
 .sync-modal-section { margin-bottom: 16px; }
 .sync-modal-section p { font-size: 12.5px; color: #9a9eb0; line-height: 1.55; margin-bottom: 10px; }
 .sync-modal-section strong { color: #d6b8ff; }
@@ -403,7 +418,22 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
 </style>
 </head>
 <body>
-<div id="app">
+
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-icon"><i class="ti ti-chart-candle" aria-hidden="true"></i></div>
+    <h1 class="login-title">Trading Journal</h1>
+    <p class="login-sub">Sign in to access your dashboard</p>
+    <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" autocomplete="username"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') handleLogin();"></div>
+    <button class="btn-save login-btn" onclick="handleLogin()">Sign in</button>
+    <div class="login-error" id="login-error" style="display:none;"></div>
+    <div class="login-loading" id="login-loading" style="display:none;">Checking session...</div>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+
   <div class="discipline-banner">THE PAIN OF DISCIPLINE OR THE PAIN OF REGRET</div>
 
   <div class="layout">
@@ -420,6 +450,10 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
           <i class="ti ti-cloud" aria-hidden="true"></i>
           <span id="cloud-sync-label">☁️ Set up cloud sync</span>
         </button>
+        <div class="logged-in-row">
+          <span class="logged-in-email" id="logged-in-email"></span>
+          <button class="logout-btn" onclick="handleLogout()" title="Sign out"><i class="ti ti-logout" aria-hidden="true"></i></button>
+        </div>
       </div>
     </nav>
 
@@ -730,36 +764,15 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
 
     <div class="sync-status-row">
       <span class="sync-status-dot" id="sync-status-dot"></span>
-      <span id="sync-status-text">Not connected — set this up once below, then enter a passphrase.</span>
+      <span id="sync-status-text">Not signed in.</span>
     </div>
 
     <div class="sync-modal-section">
-      <p>Sync works with a <strong>passphrase only you know</strong> — no email, no password reset. Anyone who enters the same passphrase on any device gets the same data. There's no way to recover a forgotten passphrase, so write it down somewhere safe.</p>
+      <p>Cloud sync is automatic now — it's tied to your login. Sign in with the same email and password on any device and your trades, accounts, and mantra checklist will sync there too. No separate passphrase or setup needed.</p>
     </div>
 
-    <span class="setup-toggle" onclick="toggleSetupBlock()">⚙️ One-time setup (only needed once, on any device) ▾</span>
-    <div class="setup-block" id="setup-block">
-      <strong>Step 1 — create a free Supabase project</strong>
-      <ol>
-        <li>Go to <code>supabase.com</code> → sign up free → "New project".</li>
-        <li>Once it's ready, go to <strong>Project Settings → API</strong>.</li>
-        <li>Copy the <strong>Project URL</strong> and the <strong>anon public key</strong>.</li>
-      </ol>
-      <strong>Step 2 — create the data table</strong>
-      <p style="margin:6px 0;">In Supabase: <strong>SQL Editor → New query</strong>, paste the contents of <code>supabase_setup.sql</code> (included with this app's files), and click Run.</p>
-      <strong>Step 3 — paste your values below</strong>
-      <div class="form-group" style="margin-top:10px;"><label>Supabase Project URL</label><input type="text" id="supabase-url-input" placeholder="https://xxxxx.supabase.co"></div>
-      <div class="form-group"><label>Supabase anon public key</label><input type="text" id="supabase-key-input" placeholder="eyJhbGciOi..."></div>
-      <button class="btn-save" style="width:100%;" onclick="saveSupabaseConfig()">Save connection settings</button>
-    </div>
-
-    <div class="form-group">
-      <label>Your sync passphrase</label>
-      <input type="password" id="sync-passphrase-input" placeholder="Choose or enter your passphrase">
-    </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeSyncModal()">Close</button>
-      <button class="btn-save" onclick="connectSync()">Connect &amp; sync now</button>
+      <button class="btn-save" style="flex:1;" onclick="closeSyncModal()">Close</button>
     </div>
     <div class="reset-note" id="sync-last-synced"></div>
   </div>
@@ -800,67 +813,153 @@ let selectedDetailAccountId = null;
    read/write — it's hashed client-side into a sync_id so the
    raw passphrase itself is never sent anywhere.
    ============================================================ */
-let syncConfig = { url: '', key: '', passphrase: '', lastSyncedAt: null };
-let supabaseClient = null;
-let syncInFlight = false;
-let syncPushTimer = null;
+/* ============================================================
+   HARDCODED SUPABASE CONNECTION
+   The Project URL + anon key live here so every device only
+   needs to log in — no copy-pasting connection settings.
+   Access is now controlled by a REAL login (Supabase Auth),
+   enforced by Supabase's own servers via Row Level Security on
+   the journal_sync table (see supabase_auth_migration.sql).
+   The "passphrase" below is now just a label for your own data
+   row, scoped to your logged-in account — it's not the security
+   boundary anymore, your login is.
+   ============================================================ */
+const SUPABASE_URL = 'https://mbtbyxtkvnkxvfqemzqg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1idGJ5eHRrdm5reHZmcWVtenFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDg0MTIsImV4cCI6MjA5Nzg4NDQxMn0.nhM72xaRCMUGC15Xp6uHTU5DpyYQDRCcdYdCajGJQxQ';
 
+let supabaseClient = null;
+function initSupabaseClient() {
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) { supabaseClient = null; }
+}
+
+/* ============================================================
+   AUTH — real, server-enforced login via Supabase Auth.
+   Nothing in #app renders until a valid session is confirmed.
+   Without a valid session token, Supabase's servers refuse any
+   read/write on journal_sync — this can't be bypassed by viewing
+   page source or disabling JavaScript, unlike a client-side
+   password check.
+   ============================================================ */
+let currentUser = null;
+
+async function checkSessionAndInit() {
+  initSupabaseClient();
+  if (!supabaseClient) {
+    showLoginError('Could not reach the login service. Check your connection and try again.');
+    return;
+  }
+  document.getElementById('login-loading').style.display = 'block';
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    if (data && data.session && data.session.user) {
+      currentUser = data.session.user;
+      showApp();
+    } else {
+      showLoginScreen();
+    }
+  } catch (e) {
+    showLoginScreen();
+  }
+  document.getElementById('login-loading').style.display = 'none';
+
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT' || !session) {
+      currentUser = null;
+      if (cloudPollInterval) clearInterval(cloudPollInterval);
+      showLoginScreen();
+    } else if (event === 'SIGNED_IN' && session.user) {
+      currentUser = session.user;
+      showApp();
+    }
+  });
+}
+
+function showLoginScreen() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  document.getElementById('logged-in-email').textContent = currentUser ? currentUser.email : '';
+  initAppAfterLogin();
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email || !password) { showLoginError('Please enter both email and password.'); return; }
+  if (!supabaseClient) { showLoginError('Login service unavailable. Try refreshing the page.'); return; }
+
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) { showLoginError(error.message || 'Sign-in failed. Check your email and password.'); return; }
+    currentUser = data.user;
+    showApp();
+  } catch (e) {
+    showLoginError('Sign-in failed: ' + (e.message || 'unknown error'));
+  }
+}
+
+async function handleLogout() {
+  if (!confirm('Sign out of this device?')) return;
+  try { if (supabaseClient) await supabaseClient.auth.signOut(); } catch (e) {}
+  currentUser = null;
+  if (cloudPollInterval) clearInterval(cloudPollInterval);
+  showLoginScreen();
+}
+
+// Runs once, right after a successful login (fresh sign-in or
+// restored session), to boot the rest of the app exactly as before.
+let appAlreadyInitialized = false;
+function initAppAfterLogin() {
+  if (appAlreadyInitialized) return;
+  appAlreadyInitialized = true;
+  loadTabOrder();
+  renderSidebarTabs();
+  loadAccounts();
+  loadTrades();
+  populateLinkedAccountOptions();
+  loadSyncConfig();
+}
+
+let syncConfig = { lastSyncedAt: null };
+function persistSyncConfig() { try { localDB.set(SYNC_CONFIG_KEY, JSON.stringify(syncConfig)); } catch (e) {} }
 function loadSyncConfig() {
   try {
     const r = localDB.get(SYNC_CONFIG_KEY);
     if (r && r.value) syncConfig = JSON.parse(r.value);
   } catch (e) {}
-  if (syncConfig.url && syncConfig.key) initSupabaseClient();
-  if (syncConfig.url && syncConfig.key && syncConfig.passphrase) startCloudPolling();
+  // Now that login is the access boundary, syncing starts automatically
+  // for the logged-in user — no separate passphrase/connect step needed.
+  autoSyncOnLogin();
   updateSyncButtonUI();
-}
-function persistSyncConfig() { try { localDB.set(SYNC_CONFIG_KEY, JSON.stringify(syncConfig)); } catch (e) {} }
-
-function initSupabaseClient() {
-  try {
-    supabaseClient = window.supabase.createClient(syncConfig.url, syncConfig.key);
-  } catch (e) { supabaseClient = null; }
-}
-
-// Simple, deterministic client-side hash (SHA-256 via Web Crypto) of the
-// passphrase, used only as a lookup key — never stored or sent in plain text.
-async function hashPassphrase(pass) {
-  const enc = new TextEncoder().encode('tj-sync-v1:' + pass);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 function openSyncModal() {
-  document.getElementById('supabase-url-input').value = syncConfig.url || '';
-  document.getElementById('supabase-key-input').value = syncConfig.key || '';
-  document.getElementById('sync-passphrase-input').value = syncConfig.passphrase || '';
-  document.getElementById('setup-block').classList.toggle('open', !(syncConfig.url && syncConfig.key));
   updateSyncStatusRow();
   document.getElementById('sync-modal-wrap').classList.add('open');
 }
 function closeSyncModal() { document.getElementById('sync-modal-wrap').classList.remove('open'); }
-function toggleSetupBlock() { document.getElementById('setup-block').classList.toggle('open'); }
-
-function saveSupabaseConfig() {
-  const url = document.getElementById('supabase-url-input').value.trim();
-  const key = document.getElementById('supabase-key-input').value.trim();
-  if (!url || !key) { alert('Please paste both the Project URL and the anon public key.'); return; }
-  syncConfig.url = url; syncConfig.key = key;
-  persistSyncConfig();
-  initSupabaseClient();
-  updateSyncStatusRow();
-  alert('Connection settings saved. Now enter a passphrase below and click "Connect & sync now".');
-}
-
 function updateSyncStatusRow() {
   const dot = document.getElementById('sync-status-dot');
   const text = document.getElementById('sync-status-text');
-  if (!syncConfig.url || !syncConfig.key) {
-    dot.className = 'sync-status-dot'; text.textContent = 'Not connected — complete the one-time setup below first.';
-  } else if (!syncConfig.passphrase) {
-    dot.className = 'sync-status-dot'; text.textContent = 'Connected to Supabase — enter a passphrase to start syncing.';
+  if (currentUser) {
+    dot.className = 'sync-status-dot on'; text.textContent = `Synced to your account (${currentUser.email}) — sign in with the same login on any device to see the same data.`;
   } else {
-    dot.className = 'sync-status-dot on'; text.textContent = `Syncing with passphrase-linked cloud storage.`;
+    dot.className = 'sync-status-dot'; text.textContent = 'Not signed in.';
   }
   const lastEl = document.getElementById('sync-last-synced');
   if (lastEl) lastEl.textContent = syncConfig.lastSyncedAt ? `Last synced: ${new Date(syncConfig.lastSyncedAt).toLocaleString()}` : '';
@@ -870,7 +969,7 @@ function updateSyncButtonUI() {
   const btn = document.getElementById('cloud-sync-btn');
   const label = document.getElementById('cloud-sync-label');
   if (!btn || !label) return;
-  if (syncConfig.url && syncConfig.key && syncConfig.passphrase) {
+  if (currentUser) {
     btn.classList.add('synced'); label.textContent = '☁️ Cloud sync on';
   } else {
     btn.classList.remove('synced'); label.textContent = '☁️ Set up cloud sync';
@@ -933,41 +1032,28 @@ function mergeStates(local, cloud) {
   return merged;
 }
 
-async function connectSync() {
-  const url = document.getElementById('supabase-url-input').value.trim();
-  const key = document.getElementById('supabase-key-input').value.trim();
-  const pass = document.getElementById('sync-passphrase-input').value;
-  if (url && key && (url !== syncConfig.url || key !== syncConfig.key)) {
-    syncConfig.url = url; syncConfig.key = key; persistSyncConfig(); initSupabaseClient();
-  }
-  if (!syncConfig.url || !syncConfig.key) { alert('Please complete the one-time setup first (paste your Supabase URL and key).'); return; }
-  if (!pass || pass.trim().length < 4) { alert('Please enter a passphrase of at least 4 characters.'); return; }
-  if (!supabaseClient) { alert('Could not connect to Supabase. Double-check your URL and key.'); return; }
+let syncInFlight = false;
+let syncPushTimer = null;
+let cloudPollInterval = null;
 
-  syncConfig.passphrase = pass;
-  persistSyncConfig();
-
-  const dot = document.getElementById('sync-status-dot');
-  const text = document.getElementById('sync-status-text');
-  dot.className = 'sync-status-dot'; text.textContent = 'Connecting...';
-
+// Runs automatically right after login (fresh sign-in or restored
+// session) — merges any cloud data for this user with whatever is
+// in local storage on this device, then keeps both in sync.
+async function autoSyncOnLogin() {
+  if (!supabaseClient || !currentUser) return;
+  updateSyncStatusRow();
   try {
-    const syncId = await hashPassphrase(pass);
-    const { data, error } = await supabaseClient.from('journal_sync').select('data').eq('sync_id', syncId).maybeSingle();
+    const { data, error } = await supabaseClient.from('journal_sync').select('data').eq('owner_id', currentUser.id).maybeSingle();
     if (error) throw error;
 
     const localState = collectFullState();
 
     if (data && data.data) {
-      // Cloud already has data for this passphrase — merge with local
       const merged = mergeStates(localState, data.data);
       applyFullState(merged);
       await pushSyncState();
-      alert('✅ Synced! Your local trades were merged with what was already in the cloud for this passphrase.');
     } else {
-      // Nothing in the cloud yet for this passphrase — push local up as the starting point
-      await supabaseClient.from('journal_sync').upsert({ sync_id: syncId, data: localState });
-      alert('✅ Cloud sync connected! Your current data is now the starting point in the cloud.');
+      await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: localState });
     }
 
     syncConfig.lastSyncedAt = new Date().toISOString();
@@ -976,18 +1062,19 @@ async function connectSync() {
     updateSyncButtonUI();
     startCloudPolling();
     render();
-    closeSyncModal();
   } catch (e) {
-    dot.className = 'sync-status-dot error'; text.textContent = 'Sync failed: ' + (e.message || 'unknown error');
+    console.warn('Initial cloud sync failed:', e.message);
+    const dot = document.getElementById('sync-status-dot');
+    const text = document.getElementById('sync-status-text');
+    if (dot && text) { dot.className = 'sync-status-dot error'; text.textContent = 'Cloud sync error: ' + (e.message || 'unknown error'); }
   }
 }
 
 async function pushSyncState() {
-  if (!supabaseClient || !syncConfig.passphrase || syncInFlight) return;
+  if (!supabaseClient || !currentUser || syncInFlight) return;
   syncInFlight = true;
   try {
-    const syncId = await hashPassphrase(syncConfig.passphrase);
-    await supabaseClient.from('journal_sync').upsert({ sync_id: syncId, data: collectFullState() });
+    await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: collectFullState() });
     syncConfig.lastSyncedAt = new Date().toISOString();
     persistSyncConfig();
   } catch (e) {
@@ -1001,21 +1088,17 @@ async function pushSyncState() {
 // so every local save also queues a cloud push, without hammering
 // the API on rapid successive edits (e.g. typing in a note).
 function queueCloudPush() {
-  if (!supabaseClient || !syncConfig.passphrase) return;
+  if (!supabaseClient || !currentUser) return;
   clearTimeout(syncPushTimer);
   syncPushTimer = setTimeout(pushSyncState, 1200);
 }
 
 // Periodically pull from the cloud so edits made on another device
-// (e.g. your phone) show up here without needing a manual refresh.
-// Only pulls if nothing is pending to push, to avoid clobbering
-// an in-progress local edit with a stale cloud copy.
-let cloudPollInterval = null;
+// show up here without needing a manual refresh.
 async function pullSyncState() {
-  if (!supabaseClient || !syncConfig.passphrase || syncInFlight) return;
+  if (!supabaseClient || !currentUser || syncInFlight) return;
   try {
-    const syncId = await hashPassphrase(syncConfig.passphrase);
-    const { data, error } = await supabaseClient.from('journal_sync').select('data, updated_at').eq('sync_id', syncId).maybeSingle();
+    const { data, error } = await supabaseClient.from('journal_sync').select('data, updated_at').eq('owner_id', currentUser.id).maybeSingle();
     if (error || !data) return;
     const remoteTime = new Date(data.updated_at).getTime();
     const localTime = syncConfig.lastSyncedAt ? new Date(syncConfig.lastSyncedAt).getTime() : 0;
@@ -2392,10 +2475,8 @@ document.getElementById('sync-modal-wrap').addEventListener('click', function(e)
 
 loadTabOrder();
 renderSidebarTabs();
-loadAccounts();
-loadTrades();
-populateLinkedAccountOptions();
-loadSyncConfig();
+
+checkSessionAndInit();
 </script>
 </body>
 </html>
