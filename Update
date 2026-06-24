@@ -1,0 +1,6 @@
+cd path/to/your/trading-journal-repo
+
+# copy the new index.html over the old one (or just edit it directly)
+git add .
+git commit -m "Update trading journal"
+git push origin main
