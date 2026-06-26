@@ -161,6 +161,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .account-toggle-btn.active { background: linear-gradient(135deg, #4a3a5e, #362a48); color: #f3e8ff; box-shadow: inset 0 0 0 1px #8b5cf6, 0 0 14px rgba(139,92,246,0.25); }
 .section-label:first-child { margin-top: 0; }
 .chart-card { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 12px; padding: 14px 12px 8px; margin-bottom: 4px; }
+
+.sim-breach-banner { display: flex; align-items: center; gap: 10px; background: #2f2510; border: 1px solid #b8860b; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
+.sim-breach-icon { font-size: 18px; flex-shrink: 0; }
+.sim-breach-text { font-size: 12.5px; color: #ffd699; line-height: 1.5; flex: 1; }
+.sim-breach-dismiss { background: none; border: none; color: #b8860b; cursor: pointer; font-size: 16px; padding: 2px; flex-shrink: 0; }
+.sim-breach-dismiss:hover { color: #ffd699; }
+.sim-ref-legend { display: flex; gap: 16px; justify-content: center; margin-top: 10px; font-size: 11px; color: #767a8c; }
+.sim-ref-legend span { display: flex; align-items: center; gap: 6px; }
+.sim-ref-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .chart-wrap { position: relative; height: 175px; }
 
 .day-list, .breakdown-list { display: flex; flex-direction: column; gap: 8px; }
@@ -244,9 +253,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .tag-add-btn { display: flex; align-items: center; gap: 6px; padding: 8px 11px; background: #232327; border: 1px solid #2a2d3a; border-radius: 8px; color: #8d8f9c; font-size: 12.5px; cursor: pointer; font-family: inherit; width: 100%; justify-content: center; }
 .tag-add-btn:hover { background: #191a24; color: #eaeaec; }
 .tag-selected-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+
+.account-link-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 9px; }
+.account-link-row { display: flex; align-items: center; gap: 8px; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; padding: 8px 10px; }
+.account-link-row-name { flex: 1; font-size: 12.5px; font-weight: 600; color: #d6d8e2; display: flex; align-items: center; gap: 6px; min-width: 0; }
+.account-link-row-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-link-row input { width: 110px; flex-shrink: 0; background: #15161f; border: 1px solid #2a2d3a; border-radius: 7px; color: #eaeaec; font-size: 12.5px; padding: 7px 9px; font-family: inherit; }
+.account-link-row .tag-chip-x { flex-shrink: 0; cursor: pointer; opacity: 0.7; font-size: 15px; }
+.account-link-row .tag-chip-x:hover { opacity: 1; }
 .tag-chip { display: flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 12px; font-size: 11.5px; }
 .tag-chip.strategy { background: #211a30; color: #b393ec; }
 .tag-chip.entrymodel { background: #2a2412; color: #e0ad5d; }
+.tag-chip.confluences { background: #16263a; color: #6fa3f0; }
 .tag-chip.failtag { background: #271520; color: #e07f9a; }
 .tag-chip-x { cursor: pointer; font-size: 12px; line-height: 1; opacity: 0.7; }
 .tag-chip-x:hover { opacity: 1; }
@@ -256,6 +274,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .tag-option:hover { background: #1c1d28; }
 .tag-option-check { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #2a2d3a; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .tag-option.selected .tag-option-check { background: #4fd394; border-color: #4fd394; color: #06160f; }
+.tag-option-del { background: none; border: none; color: #3e4154; cursor: pointer; font-size: 13px; padding: 3px; flex-shrink: 0; opacity: 0; transition: opacity 0.12s; }
+.tag-option:hover .tag-option-del { opacity: 1; }
+.tag-option-del:hover { color: #ff6b66; }
+.tag-field-row { gap: 9px; }
+.tag-add-btn-compact { padding: 6px 9px; font-size: 11.5px; }
+.tag-selected-list-compact { max-height: 56px; overflow-y: auto; }
 .tag-new-row { display: flex; gap: 6px; padding: 7px 3px 1px; border-top: 1px solid #2e2e33; margin-top: 5px; }
 .tag-new-row input { flex: 1; background: #1e1e22; border: 1px solid #2a2d3a; border-radius: 6px; color: #eaeaec; font-size: 12px; padding: 6px 8px; font-family: inherit; }
 .tag-new-row button { padding: 6px 10px; background: #3a1f5c; border: 1px solid #6d28d9; border-radius: 6px; color: #d6b8ff; font-size: 11.5px; cursor: pointer; white-space: nowrap; }
@@ -314,6 +338,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .mantra-item.checked .mantra-text { color: #82869a; text-decoration: line-through; }
 .mantra-item .delete-btn { flex-shrink: 0; }
 .mantra-add-row { display: flex; gap: 8px; margin-top: 8px; }
+
+.faults-intro { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 12px; padding: 13px 15px; margin-bottom: 20px; }
+.faults-intro p { font-size: 12.5px; color: #9a9eb0; line-height: 1.55; }
+.faults-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.faults-edit-hint { font-size: 11.5px; color: #767a8c; margin-bottom: 10px; line-height: 1.5; }
+.faults-phrase-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+.fault-phrase-chip { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 12px; font-size: 12px; background: #2e1414; color: #ff8f8a; }
+.fault-phrase-chip .tag-chip-x { cursor: pointer; opacity: 0.7; }
+.fault-phrase-chip .tag-chip-x:hover { opacity: 1; }
+.fault-badge-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+.fault-hit-badge { font-size: 9.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #2e1414; color: #ff8f8a; text-transform: uppercase; letter-spacing: 0.02em; }
+.fault-count-pill { padding: 7px 13px; border-radius: 9px; background: #1a1a1d; border: 1px solid #34343a; color: #8d90a0; font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.fault-count-pill.active { background: linear-gradient(135deg, #4a3a5e, #362a48); color: #f3e8ff; border-color: #8b5cf6; }
 .mantra-add-row input { flex: 1; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; color: #f0f1f4; font-size: 13px; padding: 10px 12px; font-family: inherit; }
 .mantra-add-row input:focus { outline: none; border-color: #8b5cf6; }
 .mantra-add-row button { padding: 10px 14px; background: linear-gradient(145deg, #7c3aed, #5b21b6); border: 1px solid #a855f7; border-radius: 9px; color: #f3e8ff; cursor: pointer; font-size: 15px; }
@@ -379,7 +416,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .tt-trend-counter { background: #2f2510; color: #ffb547; }
 .tt-condition { font-weight: 600; color: #f0f1f4; font-size: 13px; max-width: 200px; line-height: 1.35; }
 .tt-confluences { display: flex; flex-wrap: wrap; gap: 5px; max-width: 280px; }
+.tt-confluences-compact { max-width: 160px; max-height: 44px; overflow-y: auto; }
 .tt-confluence-chip { background: #24242a; color: #c6c8d6; font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+.tt-chip-entrymodel { background: #2a2412; color: #e0ad5d; }
+.tt-chip-confluence { background: #16263a; color: #6fa3f0; }
+.tt-note-toggle { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #767a8c; cursor: pointer; padding: 8px 16px; user-select: none; }
+.tt-note-toggle:hover { color: #c6c8d6; }
+.tt-note-content { font-size: 12.5px; color: #c6c8d6; line-height: 1.55; padding: 0 16px 12px; max-width: 640px; }
+.tg-confluences-compact { max-height: 44px; overflow-y: auto; margin-bottom: 6px; }
+
+.da-date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.da-date-row input[type="date"] { flex: 1; background: #1a1a1d; border: 1px solid #34343a; border-radius: 9px; color: #f0f1f4; font-size: 13.5px; padding: 9px 12px; font-family: inherit; }
+
+.week-review-card { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 13px; padding: 14px 15px; margin-bottom: 10px; transition: opacity 0.15s, border-color 0.15s; }
+.week-review-card.done { border-color: #1d5e44; background: #131c17; opacity: 0.78; }
+.week-review-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 11px; }
+.week-review-label { font-size: 13px; font-weight: 700; color: #f0f1f4; }
+.week-review-card.done .week-review-label { color: #8de8b8; }
+.week-review-done-tag { font-size: 10px; font-weight: 700; color: #8de8b8; background: #1d5e44; padding: 3px 9px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+.week-review-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.week-review-day { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.week-review-day-label { font-size: 9.5px; color: #767a8c; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 600; }
+.week-review-checkbox { width: 26px; height: 26px; border-radius: 8px; border: 1.5px solid #34343a; background: #15151a; display: flex; align-items: center; justify-content: center; transition: background 0.12s, border-color 0.12s; }
+.week-review-checkbox.checked { background: #1d5e44; border-color: #34e29a; color: #8de8b8; }
+.week-review-day.future .week-review-checkbox { opacity: 0.35; cursor: not-allowed; }
+.week-review-day.future { cursor: not-allowed; }
 .tt-pnl { font-weight: 700; font-size: 13.5px; white-space: nowrap; }
 .tt-actions-btn { background: none; border: none; color: #3e4154; cursor: pointer; font-size: 16px; padding: 4px; }
 .tt-actions-btn:hover { color: #ff6b66; }
@@ -561,7 +622,17 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
     <div class="section-label">Sim account stats</div>
     <div class="stats-grid" id="simlab-stats"></div>
     <div class="section-label">Sim equity curve</div>
+    <div class="sim-breach-banner" id="sim-breach-banner" style="display:none;">
+      <span class="sim-breach-icon">⚠️</span>
+      <span class="sim-breach-text"></span>
+      <button class="sim-breach-dismiss" onclick="dismissSimBreachBanner()" aria-label="Dismiss"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
     <div class="chart-card"><div class="chart-wrap"><canvas id="sim-equity-chart"></canvas></div></div>
+    <div class="sim-ref-legend">
+      <span><span class="sim-ref-dot" style="background:#34e29a;"></span>100R ceiling</span>
+      <span><span class="sim-ref-dot" style="background:#5a5d70;"></span>0R</span>
+      <span><span class="sim-ref-dot" style="background:#ff6b66;"></span>-10R floor</span>
+    </div>
   </div>
 
   <div class="tab-panel" id="panel-backtest">
@@ -639,24 +710,11 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
     <div class="day-list" id="day-list"></div>
   </div>
 
-  <div class="tab-panel" id="panel-breakdown">
-    <div class="section-label">By strategy</div>
-    <div class="breakdown-list" id="strategy-list"></div>
-    <div class="section-label">By entry model</div>
-    <div class="breakdown-list" id="entrymodel-list"></div>
-    <div class="section-label">By entry type</div>
-    <div class="breakdown-list" id="entry-list"></div>
-    <div class="section-label">By attempt</div>
-    <div class="breakdown-list" id="attempt-list"></div>
-    <div class="section-label">By failure reason</div>
-    <div class="breakdown-list failtag-list" id="failtag-list"></div>
-    <div class="section-label">Stop-loss hunts</div>
-    <div class="bt-valid-grid" id="slhunt-stats"></div>
-  </div>
-
   <div class="tab-panel" id="panel-patterns">
     <div class="section-label">Findings</div>
     <div class="findings-list" id="findings-list"></div>
+    <div class="section-label">🎯 Stop-loss hunts</div>
+    <div class="bt-valid-grid" id="slhunt-stats"></div>
   </div>
 
   <div class="tab-panel" id="panel-mantra">
@@ -669,6 +727,47 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
     </div>
     <button class="add-account-btn" onclick="suggestMantraItems()" style="margin-top:10px;"><i class="ti ti-bulb" aria-hidden="true"></i> 💡 Suggest reminders from my data</button>
     <div class="reset-note">Checkmarks reset automatically tomorrow — your list stays as you built it</div>
+  </div>
+
+  <div class="tab-panel" id="panel-faults">
+    <div class="faults-intro">
+      <p>Scans every trade note for language patterns linked to common self-sabotage — not AI, just keyword/phrase matching against a list you can edit. Treat it as a prompt to re-read the trade, not a verdict.</p>
+    </div>
+    <div class="section-label">🚩 Summary</div>
+    <div class="stats-grid" id="faults-summary"></div>
+    <div class="section-label">📋 Flagged trades</div>
+    <div class="faults-filter-row" id="faults-filter-row"></div>
+    <div class="trade-list" id="faults-trade-list"></div>
+    <div class="section-label">⚙️ Detection phrases</div>
+    <p class="faults-edit-hint">Add or remove phrases this scan looks for. Matching is case-insensitive and looks for the phrase anywhere in the note.</p>
+    <div class="faults-phrase-list" id="faults-phrase-list"></div>
+    <div class="mantra-add-row">
+      <input type="text" id="faults-new-phrase" placeholder="Add a phrase to detect, e.g. 'revenge trade'" onkeydown="if(event.key==='Enter') addFaultPhrase()">
+      <button onclick="addFaultPhrase()"><i class="ti ti-plus" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-dailyanalysis">
+    <div class="section-label">📅 Pick a day</div>
+    <div class="da-date-row">
+      <button class="cal-nav-btn" onclick="shiftDailyAnalysisDay(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+      <input type="date" id="da-date-input" onchange="onDailyAnalysisDateChange()">
+      <button class="cal-nav-btn" onclick="shiftDailyAnalysisDay(1)"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="section-label">📊 That day's result</div>
+    <div class="stats-grid" id="da-summary-stats"></div>
+
+    <div class="section-label">📈 Trade-by-trade for that day</div>
+    <div class="chart-card"><div class="chart-wrap"><canvas id="da-day-chart"></canvas></div></div>
+    <p class="faults-edit-hint">Each point is one trade that day, in the order it was taken — green segments are winning (TP) trades, red are losing (SL) trades, amber are breakeven.</p>
+
+    <div class="section-label">📝 Notes from that day</div>
+    <div class="trade-list" id="da-trade-list"></div>
+
+    <div class="section-label">✅ Weekly review</div>
+    <p class="faults-edit-hint">Tick off each day once you've actually reviewed its trades and notes. Once the current week is fully checked, it's marked done and a fresh week starts automatically — past weeks stay here so you can see your review streak.</p>
+    <div id="weekly-review-list"></div>
   </div>
 
   <div class="tab-panel" id="panel-log">
@@ -720,10 +819,16 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="form-group"><label>Date</label><input type="date" id="f-date"></div>
       <div class="form-group"><label>R outcome</label><input type="number" id="f-r" placeholder="e.g. 2.5 or -1" step="0.1"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>$ P&amp;L (for account tracking)</label><input type="number" id="f-pnl" placeholder="e.g. 85.50 or -42" step="0.01"></div>
-      <div class="form-group"><label>Linked account</label><select id="f-linked-account"><option value="">None</option></select></div>
+
+    <div class="form-group">
+      <label>Linked accounts (pick 1, 2, or more)</label>
+      <div class="tag-picker-wrap">
+        <button type="button" class="tag-add-btn" onclick="toggleDropdown('linkedaccount')"><i class="ti ti-plus" aria-hidden="true"></i>Add linked accounts</button>
+        <div class="tag-dropdown" id="dropdown-linkedaccount"></div>
+      </div>
+      <div class="account-link-rows" id="account-link-rows"></div>
     </div>
+
     <div class="form-row">
       <div class="form-group"><label>Direction</label><select id="f-dir"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
       <div class="form-group"><label>Status</label><select id="f-result"><option value="tp">🟢 TP</option><option value="sl">🔴 SL</option><option value="be">🟡 BE</option></select></div>
@@ -735,13 +840,23 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <input type="text" id="f-condition" placeholder="e.g. London 50% Asia Continuation">
     </div>
 
-    <div class="form-group">
-      <label>Confluences</label>
-      <div class="tag-picker-wrap">
-        <button type="button" class="tag-add-btn" onclick="toggleDropdown('entrymodel')"><i class="ti ti-plus" aria-hidden="true"></i>Add confluences</button>
-        <div class="tag-dropdown" id="dropdown-entrymodel"></div>
+    <div class="form-row tag-field-row">
+      <div class="form-group">
+        <label>Entry model</label>
+        <div class="tag-picker-wrap">
+          <button type="button" class="tag-add-btn tag-add-btn-compact" onclick="toggleDropdown('entrymodel')"><i class="ti ti-plus" aria-hidden="true"></i>Entry model</button>
+          <div class="tag-dropdown" id="dropdown-entrymodel"></div>
+        </div>
+        <div class="tag-selected-list tag-selected-list-compact" id="selected-entrymodel"></div>
       </div>
-      <div class="tag-selected-list" id="selected-entrymodel"></div>
+      <div class="form-group">
+        <label>Confluences</label>
+        <div class="tag-picker-wrap">
+          <button type="button" class="tag-add-btn tag-add-btn-compact" onclick="toggleDropdown('confluences')"><i class="ti ti-plus" aria-hidden="true"></i>Confluences</button>
+          <div class="tag-dropdown" id="dropdown-confluences"></div>
+        </div>
+        <div class="tag-selected-list tag-selected-list-compact" id="selected-confluences"></div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -862,6 +977,8 @@ const TAGS_KEY = 'trading-journal-tags-v2';
 const GOALS_KEY = 'trading-journal-goals-v1';
 const ACCOUNTS_KEY = 'trading-journal-accounts-v1';
 const SYNC_CONFIG_KEY = 'trading-journal-sync-config-v1';
+const FAULTS_KEY = 'trading-journal-faults-v1';
+const WEEKLY_REVIEW_KEY = 'trading-journal-weekly-review-v1';
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 const MIN_WIN_RATE = 50;
 let goals = { sim: 20, backtest: 20 };
@@ -997,8 +1114,10 @@ function initAppAfterLogin() {
   loadTabOrder();
   renderSidebarTabs();
   loadAccounts();
+  loadSimBreachState();
+  loadWeeklyReview();
   loadTrades();
-  populateLinkedAccountOptions();
+  loadFaultPhrases();
   loadSyncConfig();
 }
 
@@ -1050,7 +1169,9 @@ function collectFullState() {
     savedTags,
     goals,
     accounts, nextAccountId,
-    tabOrder
+    tabOrder,
+    faultPhrases,
+    weeklyReview
   };
 }
 
@@ -1062,6 +1183,8 @@ function applyFullState(state) {
   if (state.goals) goals = state.goals;
   if (state.accounts) { accounts = state.accounts; nextAccountId = state.nextAccountId || (accounts.length ? Math.max(...accounts.map(a=>a.id))+1 : 1); }
   if (state.tabOrder) tabOrder = state.tabOrder;
+  if (state.faultPhrases) faultPhrases = state.faultPhrases;
+  if (state.weeklyReview) weeklyReview = state.weeklyReview;
 }
 
 // Merge cloud + local trades/accounts by id, preferring whichever
@@ -1096,6 +1219,18 @@ function mergeStates(local, cloud) {
 
   merged.goals = cloud.goals || local.goals;
   merged.tabOrder = cloud.tabOrder || local.tabOrder;
+
+  // Weekly review: OR-combine per-day checkmarks (a day reviewed on
+  // either device counts as reviewed) — never lose a checked day.
+  const allWeekKeys = new Set([...Object.keys(local.weeklyReview||{}), ...Object.keys(cloud.weeklyReview||{})]);
+  merged.weeklyReview = {};
+  allWeekKeys.forEach(wk => {
+    const lw = (local.weeklyReview||{})[wk] || {};
+    const cw = (cloud.weeklyReview||{})[wk] || {};
+    merged.weeklyReview[wk] = {};
+    WEEK_DAY_KEYS.forEach(d => { merged.weeklyReview[wk][d] = !!(lw[d] || cw[d]); });
+  });
+
   return merged;
 }
 
@@ -1200,9 +1335,10 @@ const DEFAULT_MANTRA_ITEMS = [
 let savedTags = {
   strategy: ['Breakout', 'Reversal', 'Continuation', 'Valid setup', 'Invalid setup'],
   entrymodel: ['Order block', 'Fair value gap', 'Liquidity sweep', 'Inducement', 'Demand zone', 'Supply zone'],
+  confluences: ['Minor Inducement', 'Medium Inducement', 'B&T', 'Divergence', 'Build Up', '50% Asia Range', 'SMT', 'Mitigation'],
   failtag: ['Chased entry', 'Ignored liquidity level', 'Forced trade / anticipated move', 'Revenge / re-entry too many times', 'Wrong intention or ego', 'No discipline', 'Missed structure check', 'Traded from impulse candle alone']
 };
-let formSelected = { strategy: [], entrymodel: [], failtag: [] };
+let formSelected = { strategy: [], entrymodel: [], confluences: [], failtag: [] };
 let formSlHunt = false;
 
 function dayFromDate(dateStr) {
@@ -1256,10 +1392,11 @@ const TAB_DEFS = {
   overview:  { label: 'Overview',    icon: 'ti-layout-dashboard' },
   timeline:  { label: 'Timeline',    icon: 'ti-calendar-stats' },
   heatmap:   { label: 'Heatmap',     icon: 'ti-grid-dots' },
-  byday:     { label: 'By day',      icon: 'ti-calendar-week' },
-  breakdown: { label: 'Breakdown',   icon: 'ti-chart-pie' },
   patterns:  { label: 'Patterns',    icon: 'ti-bulb' },
+  faults:    { label: 'Faults',      icon: 'ti-flag-exclamation' },
+  dailyanalysis: { label: 'Daily analysis', icon: 'ti-notebook' },
   mantra:    { label: 'Mantra',      icon: 'ti-checklist' },
+  byday:     { label: 'By day',      icon: 'ti-calendar-week' },
   log:       { label: 'Trade log',   icon: 'ti-list-details' }
 };
 let tabOrder = Object.keys(TAB_DEFS);
@@ -1331,6 +1468,8 @@ function switchTab(tab) {
   if (tab === 'simlab') { renderProgressBar('sim'); renderSimEquityChart(); }
   if (tab === 'backtest') { renderProgressBar('backtest'); renderBacktestTab(); }
   if (tab === 'accounts') { renderAccountsTab(); }
+  if (tab === 'faults') { renderFaultsTab(); }
+  if (tab === 'dailyanalysis') { renderDailyAnalysisTab(); }
   closeMobileSidebar();
 }
 
@@ -1407,12 +1546,24 @@ async function loadTrades() {
         if (!t.trend) t.trend = 'Pro Trend';
         if (t.condition === undefined) t.condition = (t.strategyTags && t.strategyTags.length) ? t.strategyTags.join(' ') : '';
         if (!t.entryModelTags) t.entryModelTags = [];
+        if (!t.confluenceTags) {
+          // The "Confluences" field used to be stored in entryModelTags before
+          // Entry Model and Confluences were split into two fields. Carry
+          // existing data forward as Confluences (what it actually was),
+          // leaving Entry Model empty for genuinely new tagging going forward.
+          t.confluenceTags = [...t.entryModelTags];
+          t.entryModelTags = [];
+        }
         if (!t.failTags) t.failTags = [];
         if (t.slHunt === undefined) t.slHunt = false;
         if (!t.entryType) t.entryType = 'Conservative';
         if (!t.attempt) t.attempt = '1st';
         if (t.newsWeek === undefined) t.newsWeek = false;
         if (!t.account) t.account = 'Live';
+        if (!t.accountLinks) {
+          // Migrate the old single-account model: t.accountId + t.pnl -> t.accountLinks
+          t.accountLinks = t.accountId ? [{ accountId: t.accountId, pnl: (t.pnl !== undefined ? t.pnl : null) }] : [];
+        }
       });
       nextId = data.nextId || (trades.length ? Math.max(...trades.map(t => t.id)) + 1 : 1);
     } else {
@@ -1473,7 +1624,7 @@ function persistTrades() { try { localDB.set(STORAGE_KEY, JSON.stringify({ trade
 /* ============================================================
    ACCOUNT MANAGEMENT — Demo / Prop Firm / Live
    Each account: { id, name, type, startingBalance, challengeFee }
-   Trades link via t.accountId (optional). P&L comes from t.pnl ($).
+   Trades link via t.accountLinks = [{accountId, pnl}, ...] (optional, 1+).
    Prop firm challenge fee is counted as a one-time loss against
    that account's balance and P&L totals.
    ============================================================ */
@@ -1521,7 +1672,6 @@ function saveAccount() {
   }
   closeAccountModal();
   persistAccounts();
-  populateLinkedAccountOptions();
   renderAccountsTab();
 }
 /* ============================================================
@@ -1621,8 +1771,7 @@ function confirmImport() {
       date, day: dayFromDate(date),
       direction, result,
       r: 0,
-      pnl: Math.round(pnl * 100) / 100,
-      accountId,
+      accountLinks: accountId !== null ? [{ accountId, pnl: Math.round(pnl * 100) / 100 }] : [],
       strategyTags: [], entryModelTags: [], failTags: [],
       entryType: 'Conservative', attempt: '1st', newsWeek: false, slHunt: false,
       account: category,
@@ -1655,10 +1804,9 @@ function deleteAccount(id, evt) {
   if (evt) evt.stopPropagation();
   if (!confirm('Delete this account? Trades linked to it will remain in your log but become unlinked.')) return;
   accounts = accounts.filter(a => a.id !== id);
-  trades.forEach(t => { if (t.accountId === id) t.accountId = null; });
+  trades.forEach(t => { if (t.accountLinks) t.accountLinks = t.accountLinks.filter(l => l.accountId !== id); });
   if (selectedDetailAccountId === id) selectedDetailAccountId = accounts.length ? accounts[0].id : null;
   persistAccounts(); persistTrades();
-  populateLinkedAccountOptions();
   renderAccountsTab();
 }
 function editAccount(id, evt) {
@@ -1675,26 +1823,22 @@ function editAccount(id, evt) {
   document.getElementById('account-modal-wrap').classList.add('open');
 }
 
-function accountTradesFor(id) { return trades.filter(t => t.accountId === id); }
+function accountTradesFor(id) { return trades.filter(t => (t.accountLinks||[]).some(l => l.accountId === id)); }
+function pnlForAccount(t, accountId) {
+  const link = (t.accountLinks||[]).find(l => l.accountId === accountId);
+  return link && link.pnl !== null && link.pnl !== undefined ? link.pnl : 0;
+}
 
 function calcAccountSummary(acc) {
   const list = accountTradesFor(acc.id);
-  const tradesPnlSum = list.reduce((s,t) => s + (t.pnl || 0), 0);
+  const tradesPnlSum = list.reduce((s,t) => s + pnlForAccount(t, acc.id), 0);
   const fee = acc.type === 'Prop Firm' ? (acc.challengeFee || 0) : 0;
   const netPnl = tradesPnlSum - fee;
   const currentBalance = acc.startingBalance + netPnl;
-  const grossWonDollars = list.filter(t => (t.pnl||0) > 0).reduce((s,t) => s + t.pnl, 0);
-  const grossLostDollars = Math.abs(list.filter(t => (t.pnl||0) < 0).reduce((s,t) => s + t.pnl, 0)) + fee;
+  const grossWonDollars = list.reduce((s,t) => { const p = pnlForAccount(t, acc.id); return p > 0 ? s + p : s; }, 0);
+  const grossLostDollars = Math.abs(list.reduce((s,t) => { const p = pnlForAccount(t, acc.id); return p < 0 ? s + p : s; }, 0)) + fee;
   const plRatio = grossLostDollars > 0 ? (grossWonDollars / grossLostDollars) : (grossWonDollars > 0 ? Infinity : 0);
   return { tradeCount: list.length, tradesPnlSum, fee, netPnl, currentBalance, grossWonDollars, grossLostDollars, plRatio };
-}
-
-function populateLinkedAccountOptions() {
-  const sel = document.getElementById('f-linked-account');
-  if (!sel) return;
-  const current = sel.value;
-  sel.innerHTML = '<option value="">None</option>' + accounts.map(a => `<option value="${a.id}">${a.name} (${a.type})</option>`).join('');
-  if (accounts.some(a => String(a.id) === current)) sel.value = current;
 }
 
 const ACCOUNT_TYPE_EMOJI = { 'Demo': '🧪', 'Prop Firm': '🏦', 'Live': '🔴' };
@@ -1755,10 +1899,11 @@ function renderAccountDetailPanel() {
     if (!list.length) { listEl.innerHTML = '<div class="empty-msg">No trades linked to this account yet. Link trades from the trade log form.</div>'; }
     else {
       listEl.innerHTML = [...list].reverse().map(t => {
-        const pnlSign = (t.pnl||0) >= 0 ? '+' : '';
+        const acctPnl = pnlForAccount(t, acc.id);
+        const pnlSign = acctPnl >= 0 ? '+' : '';
         return `<div class="trade-card" onclick="editTrade(${t.id}, event)">
           <div class="trade-row1"><span class="trade-num">#${t.id}</span><span class="trade-date">${formatDate(t.date)}</span></div>
-          <div class="trade-row2"><span class="badge badge-${t.result}">${t.result}</span><span class="r-outcome ${(t.pnl||0)>=0?'r-pos':'r-neg'}">${pnlSign}$${(t.pnl||0).toFixed(2)}</span></div>
+          <div class="trade-row2"><span class="badge badge-${t.result}">${t.result}</span><span class="r-outcome ${acctPnl>=0?'r-pos':'r-neg'}">${pnlSign}$${acctPnl.toFixed(2)}</span></div>
         </div>`;
       }).join('');
     }
@@ -1826,8 +1971,109 @@ function lineChart(canvasId, existing, list) {
 }
 
 function renderEquityChart() { equityChart = lineChart('equity-chart', equityChart, overviewTrades()); }
-function renderSimEquityChart() { simEquityChart = lineChart('sim-equity-chart', simEquityChart, simTrades()); }
 function renderBtEquityChart() { btEquityChart = lineChart('bt-equity-chart', btEquityChart, backtestTrades()); }
+
+/* ============================================================
+   SIM LAB EQUITY CHART — fixed reference lines at -10R, 0R, 100R,
+   scale auto-expands if real performance goes beyond them, and an
+   amber breach alert fires once when cumulative R crosses below
+   -10 or above 100 (not re-fired every render for the same trade).
+   ============================================================ */
+const SIM_FLOOR_R = -10;
+const SIM_CEILING_R = 100;
+const SIM_BREACH_KEY = 'trading-journal-sim-breach-v1';
+let simBreachAlerted = { floor: false, ceiling: false };
+function loadSimBreachState() {
+  try {
+    const r = localDB.get(SIM_BREACH_KEY);
+    if (r && r.value) simBreachAlerted = JSON.parse(r.value);
+  } catch (e) {}
+}
+function persistSimBreachState() { try { localDB.set(SIM_BREACH_KEY, JSON.stringify(simBreachAlerted)); } catch (e) {} }
+
+function renderSimEquityChart() {
+  const { labels, data, cum } = buildEquity(simTrades());
+  const ctx = document.getElementById('sim-equity-chart').getContext('2d');
+  if (simEquityChart) simEquityChart.destroy();
+
+  const lineColor = cum >= 0 ? '#34e29a' : '#ff6b66';
+
+  // Scale auto-expands past -10/100 if real performance goes further,
+  // but never shrinks tighter than the -10..100 reference range.
+  const dataMin = data.length ? Math.min(...data) : 0;
+  const dataMax = data.length ? Math.max(...data) : 0;
+  const yMin = Math.min(SIM_FLOOR_R, dataMin) - 2;
+  const yMax = Math.max(SIM_CEILING_R, dataMax) + 2;
+
+  const refLine = (value, color) => labels.map(() => value);
+
+  simEquityChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Cumulative R', data, borderColor: lineColor, backgroundColor: 'transparent', borderWidth: 2.75, pointRadius: 0, pointHoverRadius: 4, pointHoverBackgroundColor: lineColor, tension: 0.15, fill: false, order: 1 },
+        { label: '0R', data: refLine(0), borderColor: '#5a5d70', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, order: 2 },
+        { label: '-10R floor', data: refLine(SIM_FLOOR_R), borderColor: '#ff6b66', borderWidth: 1.5, borderDash: [2,3], pointRadius: 0, fill: false, order: 2 },
+        { label: '100R ceiling', data: refLine(SIM_CEILING_R), borderColor: '#34e29a', borderWidth: 1.5, borderDash: [2,3], pointRadius: 0, fill: false, order: 2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { filter: (item) => item.datasetIndex === 0, callbacks: { label: (c) => 'Cumulative: ' + c.parsed.y.toFixed(2) + 'R' } }
+      },
+      scales: {
+        x: { grid: { color: '#28282c' }, ticks: { color: '#767a8c', font: { size: 9.5 }, maxRotation: 0, autoSkip: true } },
+        y: { min: yMin, max: yMax, grid: { color: '#28282c' }, ticks: { color: '#767a8c', font: { size: 9.5 }, callback: (v) => v + 'R' } }
+      }
+    }
+  });
+
+  checkSimBreach(cum);
+}
+
+function checkSimBreach(cum) {
+  let changed = false;
+  if (cum <= SIM_FLOOR_R) {
+    if (!simBreachAlerted.floor) {
+      simBreachAlerted.floor = true; changed = true;
+      showBreachAlert(`⚠️ Amber alert — you've breached the -10R floor (currently ${cum.toFixed(2)}R). Time to stop and reassess before continuing on this sim account.`, 'floor');
+    }
+  } else {
+    if (simBreachAlerted.floor) changed = true;
+    simBreachAlerted.floor = false; // reset so re-breaching after recovery alerts again
+  }
+
+  if (cum >= SIM_CEILING_R) {
+    if (!simBreachAlerted.ceiling) {
+      simBreachAlerted.ceiling = true; changed = true;
+      showBreachAlert(`⚠️ Amber alert — you've breached the 100R ceiling (currently +${cum.toFixed(2)}R). Strong milestone — review whether it's time to scale up or move toward live.`, 'ceiling');
+    }
+  } else {
+    if (simBreachAlerted.ceiling) changed = true;
+    simBreachAlerted.ceiling = false;
+  }
+
+  if (changed) persistSimBreachState();
+}
+
+function showBreachAlert(message, kind) {
+  // Visible in-app banner (persists until dismissed) plus a native alert
+  // the first time a breach happens this session, so it isn't missed.
+  const banner = document.getElementById('sim-breach-banner');
+  if (banner) {
+    banner.style.display = 'flex';
+    banner.querySelector('.sim-breach-text').textContent = message;
+    banner.dataset.kind = kind;
+  }
+  alert(message);
+}
+function dismissSimBreachBanner() {
+  const banner = document.getElementById('sim-breach-banner');
+  if (banner) banner.style.display = 'none';
+}
 
 function calcByDay(list) {
   return DAYS.map(day => {
@@ -1904,11 +2150,6 @@ function calcAttemptBreakdown(list) {
 
 function renderBreakdownTab() {
   const list = activeTrades();
-  renderBreakdownList('strategy-list', groupByTagField('strategyTags', list));
-  renderBreakdownList('entrymodel-list', groupByTagField('entryModelTags', list));
-  renderBreakdownList('entry-list', groupBy('entryType', list));
-  renderBreakdownList('attempt-list', calcAttemptBreakdown(list));
-  renderBreakdownList('failtag-list', groupByTagField('failTags', list.filter(t=>t.result==='sl')));
 
   const slHuntTrades = list.filter(t => t.slHunt);
   const slHuntLosses = slHuntTrades.filter(t => t.result === 'sl').length;
@@ -2086,6 +2327,112 @@ function suggestMantraItems() {
   if (added === 0) alert('Your checklist already includes all the current suggestions.');
 }
 
+/* ============================================================
+   FAULTS TAB — offline pattern/keyword scan over trade notes.
+   This is NOT an AI model; it's a plain phrase-match against a
+   list you can edit. It exists to surface notes worth a second
+   look, not to render a verdict on any single trade.
+   ============================================================ */
+const DEFAULT_FAULT_PHRASES = [
+  'chased entry', 'chased price', 'forced trade', 'revenge trade', 're-entry too many times',
+  'tried to re-enter', 'married my strategy', 'wrong intention', 'prove the market wrong',
+  'superior mindset', 'delusional', 'overanalytic', 'no discipline', 'no actual focus',
+  'ignored stop loss', 'ignored a liquidity level', 'ignored liquidity level', 'didn\'t check',
+  "didn't read price", 'lied to myself', 'strayed from my plan', 'strayed from plan',
+  'unrealistic take profit', 'lost in the sauce', 'crazy r/r', 'hoping for', 'anticipate',
+  'impulse candle alone', 'ego', 'fomo', 'overtraded', 'oversized', 'sized too big'
+];
+let faultPhrases = [...DEFAULT_FAULT_PHRASES];
+let faultsFilter = 'all'; // 'all' | 'flagged' | 'clean'
+
+function loadFaultPhrases() {
+  try {
+    const r = localDB.get(FAULTS_KEY);
+    if (r && r.value) faultPhrases = JSON.parse(r.value);
+    else persistFaultPhrases();
+  } catch (e) {}
+}
+function persistFaultPhrases() { try { localDB.set(FAULTS_KEY, JSON.stringify(faultPhrases)); } catch (e) {} queueCloudPush(); }
+
+function scanNoteForFaults(note) {
+  if (!note) return [];
+  const lower = note.toLowerCase();
+  return faultPhrases.filter(p => lower.includes(p.toLowerCase()));
+}
+
+function addFaultPhrase() {
+  const input = document.getElementById('faults-new-phrase');
+  const val = input.value.trim().toLowerCase();
+  if (!val) return;
+  if (!faultPhrases.includes(val)) faultPhrases.push(val);
+  input.value = '';
+  persistFaultPhrases();
+  renderFaultsTab();
+}
+function removeFaultPhrase(phrase, evt) {
+  if (evt) evt.stopPropagation();
+  faultPhrases = faultPhrases.filter(p => p !== phrase);
+  persistFaultPhrases();
+  renderFaultsTab();
+}
+function setFaultsFilter(f) {
+  faultsFilter = f;
+  renderFaultsTab();
+}
+
+function renderFaultsTab() {
+  const list = activeTrades().filter(t => t.note && t.note.trim().length);
+  const scanned = list.map(t => ({ trade: t, hits: scanNoteForFaults(t.note) }));
+  const flagged = scanned.filter(s => s.hits.length > 0);
+  const clean = scanned.filter(s => s.hits.length === 0);
+
+  // Summary stats
+  const flagRate = scanned.length ? (flagged.length / scanned.length) * 100 : 0;
+  const phraseCounts = {};
+  flagged.forEach(s => s.hits.forEach(h => { phraseCounts[h] = (phraseCounts[h]||0) + 1; }));
+  const topPhrase = Object.entries(phraseCounts).sort((a,b)=>b[1]-a[1])[0];
+  const flaggedNetR = flagged.reduce((s,x) => s + x.trade.r, 0);
+  const cleanNetR = clean.reduce((s,x) => s + x.trade.r, 0);
+
+  document.getElementById('faults-summary').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Notes scanned</div><div class="stat-value neutral">${scanned.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Flagged trades</div><div class="stat-value ${flagged.length ? 'red' : 'green'}">${flagged.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Flag rate</div><div class="stat-value ${flagRate>30?'red':flagRate>10?'amber':'green'}">${flagRate.toFixed(0)}%</div></div>
+    <div class="stat-card"><div class="stat-label">Most common phrase</div><div class="stat-value amber" style="font-size:14px;">${topPhrase ? `"${topPhrase[0]}" (${topPhrase[1]}x)` : '—'}</div></div>
+    <div class="stat-card"><div class="stat-label">Net R on flagged trades</div><div class="stat-value ${flaggedNetR>=0?'green':'red'}">${flaggedNetR>=0?'+':''}${flaggedNetR.toFixed(2)}R</div></div>
+    <div class="stat-card"><div class="stat-label">Net R on clean trades</div><div class="stat-value ${cleanNetR>=0?'green':'red'}">${cleanNetR>=0?'+':''}${cleanNetR.toFixed(2)}R</div></div>
+  `;
+
+  document.getElementById('faults-filter-row').innerHTML = `
+    <button class="fault-count-pill ${faultsFilter==='all'?'active':''}" onclick="setFaultsFilter('all')">All (${scanned.length})</button>
+    <button class="fault-count-pill ${faultsFilter==='flagged'?'active':''}" onclick="setFaultsFilter('flagged')">🚩 Flagged (${flagged.length})</button>
+    <button class="fault-count-pill ${faultsFilter==='clean'?'active':''}" onclick="setFaultsFilter('clean')">✅ Clean (${clean.length})</button>
+  `;
+
+  const toShow = faultsFilter === 'flagged' ? flagged : faultsFilter === 'clean' ? clean : scanned;
+  const sorted = [...toShow].sort((a,b) => b.hits.length - a.hits.length || b.trade.id - a.trade.id);
+  const listEl = document.getElementById('faults-trade-list');
+  if (!sorted.length) {
+    listEl.innerHTML = `<div class="empty-msg">${list.length ? 'No trades match this filter.' : 'No trade notes to scan yet — notes you write when logging trades will be checked here.'}</div>`;
+  } else {
+    listEl.innerHTML = sorted.map(({trade: t, hits}) => {
+      const sign = t.r > 0 ? '+' : '';
+      const rClass = t.r > 0 ? 'r-pos' : (t.r < 0 ? 'r-neg' : 'r-zero');
+      const hitBadges = hits.map(h => `<span class="fault-hit-badge">${h}</span>`).join('');
+      return `<div class="trade-card" onclick="editTrade(${t.id}, event)">
+        <div class="trade-row1"><span class="trade-num">#${t.id} ${hits.length ? '🚩' : '✅'}</span><span class="trade-date">${formatDate(t.date)}</span></div>
+        <div class="trade-row2"><span class="badge badge-${t.result}">${t.result.toUpperCase()}</span><span class="r-outcome ${rClass}">${sign}${t.r.toFixed(2)}R</span></div>
+        <div class="trade-note-full" style="display:block;">${t.note}</div>
+        ${hitBadges ? `<div class="fault-badge-row">${hitBadges}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('faults-phrase-list').innerHTML = faultPhrases.map(p =>
+    `<span class="fault-phrase-chip">${p}<span class="tag-chip-x" onclick="removeFaultPhrase('${p.replace(/'/g,"\\'")}', event)">×</span></span>`
+  ).join('');
+}
+
 /* --- PROGRESS BARS --- */
 function renderProgressBar(kind) {
   const list = kind === 'sim' ? simTrades() : backtestTrades();
@@ -2175,7 +2522,218 @@ function renderBacktestTab() {
   renderBtEquityChart();
 }
 
+/* ============================================================
+   DAILY ANALYSIS TAB
+   Pick any specific calendar date, see that day's result, a
+   trade-by-trade mini chart (colored per-segment by win/loss),
+   and every note logged that day so you can see exactly which
+   trade/analysis produced the win R and which produced the loss R.
+   ============================================================ */
+let dailyAnalysisDate = new Date().toISOString().split('T')[0];
+let dailyAnalysisChart = null;
+
+function shiftDailyAnalysisDay(delta) {
+  const d = new Date(dailyAnalysisDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  dailyAnalysisDate = d.toISOString().split('T')[0];
+  document.getElementById('da-date-input').value = dailyAnalysisDate;
+  renderDailyAnalysisTab();
+}
+function onDailyAnalysisDateChange() {
+  const val = document.getElementById('da-date-input').value;
+  if (val) { dailyAnalysisDate = val; renderDailyAnalysisTab(); }
+}
+
+function renderDailyAnalysisTab() {
+  document.getElementById('da-date-input').value = dailyAnalysisDate;
+  const dayTrades = activeTrades().filter(t => t.date === dailyAnalysisDate).sort((a,b) => a.id - b.id);
+
+  const s = calcStatsFor(dayTrades);
+  const sign = s.netR >= 0 ? '+' : '';
+  document.getElementById('da-summary-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Trades that day</div><div class="stat-value neutral">${dayTrades.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-value blue">${s.winRate.toFixed(1)}%</div></div>
+    <div class="stat-card"><div class="stat-label">Net R</div><div class="stat-value ${s.netR>=0?'green':'red'}">${sign}${s.netR.toFixed(2)}R</div></div>
+    <div class="stat-card"><div class="stat-label">Net $ (where entered)</div><div class="stat-value neutral">${(() => { const withPnl = dayTrades.flatMap(t => (t.accountLinks||[]).filter(l=>l.pnl!==null&&l.pnl!==undefined)); if (!withPnl.length) return '—'; const total = withPnl.reduce((s,l)=>s+l.pnl,0); return (total>=0?'+':'') + '$' + total.toFixed(2); })()}</div></div>
+  `;
+
+  renderDailyAnalysisChart(dayTrades);
+
+  const listEl = document.getElementById('da-trade-list');
+  if (!dayTrades.length) {
+    listEl.innerHTML = '<div class="empty-msg">No trades logged on this date.</div>';
+  } else {
+    const statusLabel = { tp: '🟢 TP — win', sl: '🔴 SL — loss', be: '🟡 BE — breakeven' };
+    listEl.innerHTML = dayTrades.map((t, i) => {
+      const sign2 = t.r > 0 ? '+' : '';
+      const rClass = t.r > 0 ? 'r-pos' : (t.r < 0 ? 'r-neg' : 'r-zero');
+      return `<div class="trade-card" onclick="editTrade(${t.id}, event)">
+        <div class="trade-row1"><span class="trade-num">Trade ${i+1} of ${dayTrades.length} · #${t.id}</span><span class="trade-date">${accountNameFor(t)}</span></div>
+        <div class="trade-row2"><span class="badge badge-${t.result}">${statusLabel[t.result]}</span><span class="r-outcome ${rClass}">${sign2}${t.r.toFixed(2)}R</span></div>
+        ${t.condition ? `<div class="tt-condition" style="margin-top:6px;">${t.condition}</div>` : ''}
+        ${t.note ? `<div class="trade-note-full" style="display:block; margin-top:8px;">${t.note}</div>` : '<div class="empty-msg" style="padding:8px 0;">No note written for this trade.</div>'}
+      </div>`;
+    }).join('');
+  }
+
+  renderWeeklyReviewList();
+}
+
+function renderDailyAnalysisChart(dayTrades) {
+  const ctx = document.getElementById('da-day-chart').getContext('2d');
+  if (dailyAnalysisChart) dailyAnalysisChart.destroy();
+  if (!dayTrades.length) {
+    dailyAnalysisChart = null;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    return;
+  }
+  let cum = 0;
+  const labels = ['Start'];
+  const data = [0];
+  const pointColors = ['#767a8c'];
+  dayTrades.forEach(t => {
+    cum += t.r;
+    labels.push('#' + t.id);
+    data.push(Math.round(cum * 100) / 100);
+    pointColors.push(t.result === 'tp' ? '#34e29a' : t.result === 'sl' ? '#ff6b66' : '#ffb547');
+  });
+
+  // Build per-segment colors so each line section reflects whether the
+  // trade it leads INTO was a win, loss, or breakeven.
+  const segmentColors = [];
+  for (let i = 1; i < pointColors.length; i++) segmentColors.push(pointColors[i]);
+
+  dailyAnalysisChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: pointColors,
+        pointBorderColor: pointColors,
+        pointHoverRadius: 6,
+        tension: 0,
+        fill: false,
+        segment: {
+          borderColor: (ctx2) => segmentColors[ctx2.p0DataIndex] || '#767a8c'
+        }
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => {
+              if (c.dataIndex === 0) return 'Start of day: 0R';
+              const t = dayTrades[c.dataIndex - 1];
+              const sign = t.r >= 0 ? '+' : '';
+              return `Trade #${t.id} (${t.result.toUpperCase()}): ${sign}${t.r.toFixed(2)}R → cumulative ${c.parsed.y.toFixed(2)}R`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#28282c' }, ticks: { color: '#767a8c', font: { size: 9.5 }, maxRotation: 0 } },
+        y: { grid: { color: '#28282c' }, ticks: { color: '#767a8c', font: { size: 9.5 }, callback: (v) => v + 'R' } }
+      }
+    }
+  });
+}
+
 function formatDate(d) { const [y,m,day]=d.split('-'); const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`; }
+
+/* ============================================================
+   WEEKLY REVIEW — Daily Analysis tab
+   7 checkboxes per week (Mon-Sun), confirming you've actually
+   reviewed that day's trades/notes. Once a week's 7 days are all
+   checked it's visually marked "done" (faded, green border) but
+   stays in the list — nothing is deleted. New weeks appear
+   automatically as time passes; nothing needs to be created
+   manually.
+   weeklyReview = { "<mondayDateKey>": { "Mon": true, "Tue": false, ... } }
+   ============================================================ */
+const WEEK_DAY_KEYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+let weeklyReview = {};
+
+function loadWeeklyReview() {
+  try {
+    const r = localDB.get(WEEKLY_REVIEW_KEY);
+    if (r && r.value) weeklyReview = JSON.parse(r.value);
+  } catch (e) {}
+}
+function persistWeeklyReview() { try { localDB.set(WEEKLY_REVIEW_KEY, JSON.stringify(weeklyReview)); } catch (e) {} queueCloudPush(); }
+
+function weekRangeLabel(mondayKey) {
+  const start = new Date(mondayKey + 'T00:00:00');
+  const end = new Date(start); end.setDate(start.getDate() + 6);
+  const fmt = (d) => `${d.getMonth()+1}/${d.getDate()}`;
+  return `${fmt(start)} – ${fmt(end)}`;
+}
+
+function dateForWeekDay(mondayKey, dayIndex) {
+  const d = new Date(mondayKey + 'T00:00:00');
+  d.setDate(d.getDate() + dayIndex);
+  return d.toISOString().split('T')[0];
+}
+
+function toggleWeeklyReviewDay(mondayKey, dayKey) {
+  const todayKey = getWeekKey(new Date().toISOString().split('T')[0]);
+  const dayIdx = WEEK_DAY_KEYS.indexOf(dayKey);
+  const actualDate = dateForWeekDay(mondayKey, dayIdx);
+  if (actualDate > new Date().toISOString().split('T')[0]) return; // can't check future days
+
+  if (!weeklyReview[mondayKey]) weeklyReview[mondayKey] = {};
+  weeklyReview[mondayKey][dayKey] = !weeklyReview[mondayKey][dayKey];
+  persistWeeklyReview();
+  renderWeeklyReviewList();
+}
+
+function isWeekDone(mondayKey) {
+  const week = weeklyReview[mondayKey] || {};
+  return WEEK_DAY_KEYS.every(d => week[d]);
+}
+
+function renderWeeklyReviewList() {
+  const el = document.getElementById('weekly-review-list');
+  if (!el) return;
+  const currentMonday = getWeekKey(new Date().toISOString().split('T')[0]);
+
+  // Build the list of weeks to show: current week, plus any past
+  // weeks that already have at least one checkbox ticked or trades
+  // logged, newest first.
+  const tradeWeeks = new Set(trades.map(t => getWeekKey(t.date)));
+  const reviewWeeks = new Set(Object.keys(weeklyReview));
+  const allWeeks = new Set([currentMonday, ...tradeWeeks, ...reviewWeeks]);
+  const sortedWeeks = [...allWeeks].sort().reverse();
+
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  el.innerHTML = sortedWeeks.map(mondayKey => {
+    const done = isWeekDone(mondayKey);
+    const week = weeklyReview[mondayKey] || {};
+    const isCurrent = mondayKey === currentMonday;
+    const dayCells = WEEK_DAY_KEYS.map((dayKey, idx) => {
+      const actualDate = dateForWeekDay(mondayKey, idx);
+      const isFuture = actualDate > todayStr;
+      const checked = !!week[dayKey];
+      return `<div class="week-review-day ${isFuture?'future':''}" onclick="${isFuture?'':`toggleWeeklyReviewDay('${mondayKey}','${dayKey}')`}">
+        <span class="week-review-day-label">${dayKey}</span>
+        <div class="week-review-checkbox ${checked?'checked':''}">${checked?'<i class="ti ti-check" aria-hidden="true" style="font-size:13px;"></i>':''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="week-review-card ${done?'done':''}">
+      <div class="week-review-head">
+        <span class="week-review-label">${isCurrent ? 'This week' : 'Week of'} (${weekRangeLabel(mondayKey)})</span>
+        ${done ? '<span class="week-review-done-tag">✓ Reviewed</span>' : ''}
+      </div>
+      <div class="week-review-days">${dayCells}</div>
+    </div>`;
+  }).join('');
+}
 
 let currentLogView = 'grid';
 let calMonthCursor = new Date();
@@ -2192,8 +2750,16 @@ function setLogView(view) {
 }
 
 function pnlOrR(t) {
-  // Prefer dollar P&L when present, otherwise fall back to R for display purposes
-  if (t.pnl !== undefined && t.pnl !== null) return { value: t.pnl, isDollar: true };
+  // Prefer dollar P&L when any account links have a $ amount, summed across
+  // all linked accounts (their amounts can differ by account/lot size).
+  // Falls back to R for display when no dollar figures exist at all.
+  if (t.accountLinks && t.accountLinks.length) {
+    const withAmounts = t.accountLinks.filter(l => l.pnl !== null && l.pnl !== undefined);
+    if (withAmounts.length) {
+      const total = withAmounts.reduce((s,l) => s + l.pnl, 0);
+      return { value: total, isDollar: true };
+    }
+  }
   return { value: t.r, isDollar: false };
 }
 function formatPnl(t) {
@@ -2207,9 +2773,9 @@ function pnlColorClass(t) {
 }
 
 function accountNameFor(t) {
-  if (t.accountId) {
-    const acc = accounts.find(a => a.id === t.accountId);
-    if (acc) return acc.name;
+  if (t.accountLinks && t.accountLinks.length) {
+    const names = t.accountLinks.map(l => { const acc = accounts.find(a => a.id === l.accountId); return acc ? acc.name : null; }).filter(Boolean);
+    if (names.length) return names.join(', ');
   }
   return t.account || '—';
 }
@@ -2230,11 +2796,21 @@ function renderTradeTable() {
 
   table.innerHTML = `
     <tr>
-      <th>Date</th><th>Pair</th><th>Trade type</th><th>Status</th><th>Account</th><th>Trend</th><th>Condition</th><th>Confluences</th><th>Net P&amp;L</th><th>Actions</th>
+      <th>Date</th><th>Pair</th><th>Trade type</th><th>Status</th><th>Account</th><th>Trend</th><th>Condition</th><th>Entry model</th><th>Confluences</th><th>Net P&amp;L</th><th>Actions</th>
     </tr>` +
     data.map(t => {
-      const confluences = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip">${c}</span>`).join('') || '<span class="tt-empty-cell">—</span>';
+      const entryModels = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip tt-chip-entrymodel">${c}</span>`).join('') || '<span class="tt-empty-cell">—</span>';
+      const confluences = (t.confluenceTags||[]).map(c => `<span class="tt-confluence-chip tt-chip-confluence">${c}</span>`).join('') || '<span class="tt-empty-cell">—</span>';
       const trendClass = t.trend === 'Counter Trend' ? 'tt-trend-counter' : 'tt-trend-pro';
+      const noteRow = t.note ? `
+        <tr class="row-note-toggle-row">
+          <td colspan="11" style="padding:0;">
+            <div class="tt-note-toggle" onclick="event.stopPropagation(); toggleExpand(${t.id});">
+              <i class="ti ti-note ${expandedId===t.id?'':'ti-note-off'}" aria-hidden="true"></i> Text note ${expandedId===t.id?'▲':'▼'}
+            </div>
+            ${expandedId===t.id ? `<div class="tt-note-content">${t.note}</div>` : ''}
+          </td>
+        </tr>` : '';
       return `<tr class="row-${t.result}" onclick="editTrade(${t.id}, event)" style="cursor:pointer;">
         <td class="tt-date">${formatDate(t.date)}</td>
         <td class="tt-pair">${t.mt5Symbol || t.condition?.split(' ')[0] || '—'}</td>
@@ -2243,10 +2819,11 @@ function renderTradeTable() {
         <td><span class="tt-account"><span class="tt-account-bar"></span>${accountNameFor(t)}</span></td>
         <td><span class="tt-trend ${trendClass}">${t.trend || 'Pro Trend'}</span></td>
         <td class="tt-condition">${t.condition || '<span class="tt-empty-cell">—</span>'}</td>
-        <td><div class="tt-confluences">${confluences}</div></td>
+        <td><div class="tt-confluences tt-confluences-compact">${entryModels}</div></td>
+        <td><div class="tt-confluences tt-confluences-compact">${confluences}</div></td>
         <td class="tt-pnl ${pnlColorClass(t)}">${formatPnl(t)}</td>
         <td><button class="tt-actions-btn" onclick="deleteTrade(${t.id}, event)" aria-label="Delete trade ${t.id}"><i class="ti ti-x" aria-hidden="true"></i></button></td>
-      </tr>`;
+      </tr>${noteRow}`;
     }).join('');
 }
 
@@ -2257,7 +2834,8 @@ function renderTradeGrid() {
   if (!data.length) { grid.innerHTML = '<div class="empty-msg">No trades yet. Tap the plus button to log your first one!</div>'; return; }
   const statusLabel = { tp: '🟢 T/P', sl: '🔴 S/L', be: '🟡 B/E' };
   grid.innerHTML = data.map(t => {
-    const confluences = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip">${c}</span>`).join('');
+    const entryModels = (t.entryModelTags||[]).map(c => `<span class="tt-confluence-chip tt-chip-entrymodel">${c}</span>`).join('');
+    const confluences = (t.confluenceTags||[]).map(c => `<span class="tt-confluence-chip tt-chip-confluence">${c}</span>`).join('');
     const trendClass = t.trend === 'Counter Trend' ? 'tt-trend-counter' : 'tt-trend-pro';
     return `<div class="tg-card row-${t.result}" onclick="editTrade(${t.id}, event)">
       <div class="tg-head">
@@ -2270,7 +2848,11 @@ function renderTradeGrid() {
         <span class="tt-trend ${trendClass}">${t.trend || 'Pro Trend'}</span>
       </div>
       ${t.condition ? `<div class="tg-condition">${t.condition}</div>` : ''}
-      ${confluences ? `<div class="tg-confluences">${confluences}</div>` : ''}
+      ${entryModels ? `<div class="tg-confluences tg-confluences-compact">${entryModels}</div>` : ''}
+      ${confluences ? `<div class="tg-confluences tg-confluences-compact">${confluences}</div>` : ''}
+      ${t.note ? `<div class="tt-note-toggle" onclick="event.stopPropagation(); toggleExpand(${t.id});">
+        <i class="ti ti-note" aria-hidden="true"></i> Text note ${expandedId===t.id?'▲':'▼'}
+      </div>${expandedId===t.id ? `<div class="tt-note-content">${t.note}</div>` : ''}` : ''}
     </div>`;
   }).join('');
 }
@@ -2330,7 +2912,7 @@ function render() {
   renderStats(); renderEquityChart(); renderDayChart(); renderDayList(); renderBreakdownTab(); renderFindings();
   renderDaySelector(); renderBrief(); renderMonthList(); renderWeekChart(); renderHeatmap(); renderMantra();
   renderTrades(); renderSimLab(); renderProgressBar('sim'); renderProgressBar('backtest'); renderSimEquityChart(); renderBacktestTab();
-  renderAccountsTab();
+  renderAccountsTab(); renderFaultsTab(); renderDailyAnalysisTab();
 }
 
 function toggleExpand(id) { expandedId = expandedId===id ? null : id; renderTrades(); }
@@ -2338,19 +2920,27 @@ function deleteTrade(id, evt) { evt.stopPropagation(); trades = trades.filter(t=
 
 function renderDropdown(kind) {
   const options = savedTags[kind]; const dropdown = document.getElementById('dropdown-'+kind);
-  dropdown.innerHTML = options.map(opt => `<div class="tag-option ${formSelected[kind].includes(opt)?'selected':''}" onclick="toggleFormTag('${kind}', '${opt.replace(/'/g,"\\'")}')">
-    <div class="tag-option-check">${formSelected[kind].includes(opt)?'<i class="ti ti-check" aria-hidden="true" style="font-size:10px;"></i>':''}</div><span>${opt}</span></div>`).join('') +
+  dropdown.innerHTML = options.map(opt => `<div class="tag-option ${formSelected[kind].includes(opt)?'selected':''}">
+    <span onclick="toggleFormTag('${kind}', '${opt.replace(/'/g,"\\'")}')" style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
+      <span class="tag-option-check">${formSelected[kind].includes(opt)?'<i class="ti ti-check" aria-hidden="true" style="font-size:10px;"></i>':''}</span><span>${opt}</span>
+    </span>
+    <button type="button" class="tag-option-del" onclick="deleteSavedTag('${kind}', '${opt.replace(/'/g,"\\'")}', event)" aria-label="Delete this tag permanently"><i class="ti ti-trash" aria-hidden="true"></i></button>
+  </div>`).join('') +
     `<div class="tag-new-row"><input type="text" id="newtag-${kind}" placeholder="Add a new tag"><button type="button" onclick="addNewTag('${kind}')">Add</button></div>`;
 }
-function toggleDropdown(kind) {
-  const dropdown = document.getElementById('dropdown-'+kind); const isOpen = dropdown.classList.contains('open');
-  document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('open'));
-  if (!isOpen) { renderDropdown(kind); dropdown.classList.add('open'); }
+function deleteSavedTag(kind, tag, evt) {
+  if (evt) evt.stopPropagation();
+  if (!confirm(`Delete "${tag}" from your ${kind} tag list permanently? This won't remove it from trades that already used it, only from the picker.`)) return;
+  savedTags[kind] = savedTags[kind].filter(t => t !== tag);
+  formSelected[kind] = formSelected[kind].filter(t => t !== tag);
+  persistTags();
+  renderDropdown(kind);
+  renderSelectedChips(kind);
 }
 function toggleFormTag(kind, tag) { const idx = formSelected[kind].indexOf(tag); if (idx>=0) formSelected[kind].splice(idx,1); else formSelected[kind].push(tag); renderDropdown(kind); renderSelectedChips(kind); autosaveTagChange(); }
 function renderSelectedChips(kind) {
   const el = document.getElementById('selected-'+kind);
-  const colorClass = kind === 'failtag' ? 'failtag' : kind === 'entrymodel' ? 'entrymodel' : 'strategy';
+  const colorClass = kind === 'failtag' ? 'failtag' : kind === 'entrymodel' ? 'entrymodel' : kind === 'confluences' ? 'confluences' : 'strategy';
   el.innerHTML = formSelected[kind].map(tag => `<span class="tag-chip ${colorClass}">${tag}<span class="tag-chip-x" onclick="removeFormTag('${kind}', '${tag.replace(/'/g,"\\'")}', event)">×</span></span>`).join('');
 }
 function removeFormTag(kind, tag, evt) { evt.stopPropagation(); formSelected[kind] = formSelected[kind].filter(t=>t!==tag); renderSelectedChips(kind); if (document.getElementById('dropdown-'+kind).classList.contains('open')) renderDropdown(kind); autosaveTagChange(); }
@@ -2360,12 +2950,82 @@ function addNewTag(kind) {
   if (!formSelected[kind].includes(val)) formSelected[kind].push(val);
   input.value=''; renderDropdown(kind); renderSelectedChips(kind); persistTags(); autosaveTagChange();
 }
+
+/* ============================================================
+   MULTI-ACCOUNT LINK PICKER
+   A trade can now link to 2-3+ named accounts at once, each with
+   its OWN dollar P&L (since the same trade idea can have
+   different lot sizes/risk on different accounts). Stored as
+   t.accountLinks = [{ accountId, pnl }, ...]. The old single
+   t.accountId / t.pnl fields are migrated into this on load.
+   ============================================================ */
+let formAccountLinks = []; // [{ accountId, pnl }]
+
+function toggleDropdown(kind) {
+  if (kind === 'linkedaccount') { toggleLinkedAccountDropdown(); return; }
+  const dropdown = document.getElementById('dropdown-'+kind); const isOpen = dropdown.classList.contains('open');
+  document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('open'));
+  if (!isOpen) { renderDropdown(kind); dropdown.classList.add('open'); }
+}
+function toggleLinkedAccountDropdown() {
+  const dropdown = document.getElementById('dropdown-linkedaccount');
+  const isOpen = dropdown.classList.contains('open');
+  document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('open'));
+  if (!isOpen) { renderLinkedAccountDropdown(); dropdown.classList.add('open'); }
+}
+function renderLinkedAccountDropdown() {
+  const dropdown = document.getElementById('dropdown-linkedaccount');
+  if (!accounts.length) {
+    dropdown.innerHTML = `<div class="tag-option" style="cursor:default;"><span>No accounts yet — add one in the Accounts tab first.</span></div>`;
+    return;
+  }
+  dropdown.innerHTML = accounts.map(a => {
+    const isSelected = formAccountLinks.some(l => l.accountId === a.id);
+    return `<div class="tag-option ${isSelected?'selected':''}" onclick="toggleAccountLink(${a.id})">
+      <div class="tag-option-check">${isSelected?'<i class="ti ti-check" aria-hidden="true" style="font-size:10px;"></i>':''}</div>
+      <span>${ACCOUNT_TYPE_EMOJI[a.type]||''} ${a.name}</span></div>`;
+  }).join('');
+}
+function toggleAccountLink(accountId) {
+  const idx = formAccountLinks.findIndex(l => l.accountId === accountId);
+  if (idx >= 0) formAccountLinks.splice(idx, 1);
+  else formAccountLinks.push({ accountId, pnl: null });
+  renderLinkedAccountDropdown();
+  renderAccountLinkRows();
+  autosaveTagChange();
+}
+function removeAccountLink(accountId, evt) {
+  if (evt) evt.stopPropagation();
+  formAccountLinks = formAccountLinks.filter(l => l.accountId !== accountId);
+  renderAccountLinkRows();
+  if (document.getElementById('dropdown-linkedaccount').classList.contains('open')) renderLinkedAccountDropdown();
+  autosaveTagChange();
+}
+function updateAccountLinkPnl(accountId, val) {
+  const link = formAccountLinks.find(l => l.accountId === accountId);
+  if (!link) return;
+  link.pnl = val === '' ? null : parseFloat(val);
+  autosaveTagChange();
+}
+function renderAccountLinkRows() {
+  const el = document.getElementById('account-link-rows');
+  if (!formAccountLinks.length) { el.innerHTML = ''; return; }
+  el.innerHTML = formAccountLinks.map(link => {
+    const acc = accounts.find(a => a.id === link.accountId);
+    const name = acc ? `${ACCOUNT_TYPE_EMOJI[acc.type]||''} ${acc.name}` : 'Unknown account';
+    return `<div class="account-link-row">
+      <span class="account-link-row-name"><span>${name}</span></span>
+      <input type="number" step="0.01" placeholder="$ P&L" value="${link.pnl !== null && link.pnl !== undefined ? link.pnl : ''}" onchange="updateAccountLinkPnl(${link.accountId}, this.value)">
+      <span class="tag-chip-x" onclick="removeAccountLink(${link.accountId}, event)">×</span>
+    </div>`;
+  }).join('');
+}
 document.addEventListener('click', function(e) { if (!e.target.closest('.tag-picker-wrap')) document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('open')); });
 
 let editingTradeId = null;
 let autosaveTimer = null;
 let autosaveBound = false;
-const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-pnl','f-linked-account','f-account','f-dir','f-result','f-trend','f-condition','f-entrytype','f-attempt','f-newsweek','f-note'];
+const AUTOSAVE_FIELD_IDS = ['f-date','f-r','f-account','f-dir','f-result','f-trend','f-condition','f-entrytype','f-attempt','f-newsweek','f-note'];
 
 function openModal() {
   editingTradeId = null;
@@ -2375,9 +3035,8 @@ function openModal() {
   document.getElementById('modal-save-btn').textContent = 'Save trade';
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-r').value = '';
-  document.getElementById('f-pnl').value = '';
-  populateLinkedAccountOptions();
-  document.getElementById('f-linked-account').value = '';
+  formAccountLinks = [];
+  renderAccountLinkRows();
   document.getElementById('f-account').value = 'Backtest';
   document.getElementById('f-dir').value = 'buy';
   document.getElementById('f-result').value = 'tp';
@@ -2387,9 +3046,9 @@ function openModal() {
   document.getElementById('f-attempt').value = '1st';
   document.getElementById('f-newsweek').checked = false;
   document.getElementById('f-note').value = '';
-  formSelected = { strategy: [], entrymodel: [], failtag: [] };
+  formSelected = { strategy: [], entrymodel: [], confluences: [], failtag: [] };
   formSlHunt = false;
-  renderSelectedChips('strategy'); renderSelectedChips('entrymodel'); renderSelectedChips('failtag');
+  renderSelectedChips('strategy'); renderSelectedChips('entrymodel'); renderSelectedChips('confluences'); renderSelectedChips('failtag');
   renderSlHuntButton();
   document.querySelector('.modal-actions').style.display = 'flex';
   document.getElementById('modal-wrap').classList.add('open');
@@ -2403,9 +3062,8 @@ function editTrade(id, evt) {
   document.getElementById('modal-title').textContent = 'Edit trade #' + id;
   document.getElementById('f-date').value = t.date;
   document.getElementById('f-r').value = t.r;
-  document.getElementById('f-pnl').value = (t.pnl !== undefined && t.pnl !== null) ? t.pnl : '';
-  populateLinkedAccountOptions();
-  document.getElementById('f-linked-account').value = t.accountId || '';
+  formAccountLinks = (t.accountLinks || []).map(l => ({...l}));
+  renderAccountLinkRows();
   document.getElementById('f-account').value = t.account;
   document.getElementById('f-dir').value = t.direction;
   document.getElementById('f-result').value = t.result;
@@ -2415,9 +3073,9 @@ function editTrade(id, evt) {
   document.getElementById('f-attempt').value = t.attempt;
   document.getElementById('f-newsweek').checked = !!t.newsWeek;
   document.getElementById('f-note').value = t.note || '';
-  formSelected = { strategy: [...(t.strategyTags||[])], entrymodel: [...(t.entryModelTags||[])], failtag: [...(t.failTags||[])] };
+  formSelected = { strategy: [...(t.strategyTags||[])], entrymodel: [...(t.entryModelTags||[])], confluences: [...(t.confluenceTags||[])], failtag: [...(t.failTags||[])] };
   formSlHunt = !!t.slHunt;
-  renderSelectedChips('strategy'); renderSelectedChips('entrymodel'); renderSelectedChips('failtag');
+  renderSelectedChips('strategy'); renderSelectedChips('entrymodel'); renderSelectedChips('confluences'); renderSelectedChips('failtag');
   renderSlHuntButton();
   // Edit mode autosaves continuously — hide explicit Save/Cancel pair, show a Done button instead
   document.querySelector('.modal-actions').style.display = 'flex';
@@ -2460,16 +3118,11 @@ function applyEditInPlace() {
   const idx = trades.findIndex(t => t.id === editingTradeId);
   if (idx === -1) return;
   const wasReady = isReady();
-  const pnlRaw = document.getElementById('f-pnl').value;
-  const pnl = pnlRaw === '' ? null : parseFloat(pnlRaw);
-  const linkedRaw = document.getElementById('f-linked-account').value;
-  const accountId = linkedRaw === '' ? null : parseInt(linkedRaw, 10);
   trades[idx] = {
     ...trades[idx],
     date, day: dayFromDate(date),
     r,
-    pnl: isNaN(pnl) ? null : pnl,
-    accountId,
+    accountLinks: formAccountLinks.map(l => ({...l})),
     account: document.getElementById('f-account').value,
     direction: document.getElementById('f-dir').value,
     result: document.getElementById('f-result').value,
@@ -2481,6 +3134,7 @@ function applyEditInPlace() {
     note: document.getElementById('f-note').value.trim(),
     strategyTags: [...formSelected.strategy],
     entryModelTags: [...formSelected.entrymodel],
+    confluenceTags: [...formSelected.confluences],
     failTags: [...formSelected.failtag],
     slHunt: formSlHunt
   };
@@ -2517,10 +3171,6 @@ function saveTrade() {
   }
   const date = document.getElementById('f-date').value;
   const r = parseFloat(document.getElementById('f-r').value);
-  const pnlRaw = document.getElementById('f-pnl').value;
-  const pnl = pnlRaw === '' ? null : parseFloat(pnlRaw);
-  const linkedRaw = document.getElementById('f-linked-account').value;
-  const accountId = linkedRaw === '' ? null : parseInt(linkedRaw, 10);
   const account = document.getElementById('f-account').value;
   const direction = document.getElementById('f-dir').value;
   const result = document.getElementById('f-result').value;
@@ -2534,11 +3184,13 @@ function saveTrade() {
   const day = dayFromDate(date);
   const strategyTags = [...formSelected.strategy];
   const entryModelTags = [...formSelected.entrymodel];
+  const confluenceTags = [...formSelected.confluences];
   const failTags = [...formSelected.failtag];
   const slHunt = formSlHunt;
+  const accountLinks = formAccountLinks.map(l => ({...l}));
   const wasReady = isReady();
 
-  trades.push({ id: nextId++, date, day, direction, result, trend, condition, r, pnl: isNaN(pnl)?null:pnl, accountId, strategyTags, entryModelTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
+  trades.push({ id: nextId++, date, day, direction, result, trend, condition, r, accountLinks, strategyTags, entryModelTags, confluenceTags, failTags, entryType, attempt, newsWeek, slHunt, account, note });
 
   closeModal(); render(); setSaving('Saving...'); persistTrades(); setSaving('');
   if (!wasReady && isReady()) {

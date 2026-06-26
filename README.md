@@ -1,25 +1,44 @@
 # Trading Journal
 
-One site, one URL, one Vercel project — responsive across desktop and mobile.
+One responsive site (desktop + mobile), real login, cloud sync, MT5 import — plus a new offline note-fault scanner.
 
-## What changed
-Previously this was two separate deployments (desktop + mobile), each its own Vercel project and URL. They've now been merged into a single `index.html` that automatically adapts:
-- **Wide screens** → full sidebar, table/grid/calendar trade log, multi-column stat grids.
-- **Narrow screens (≤860px)** → hamburger menu (slide-out sidebar drawer), card-based trade log by default, single/double-column stat grids, full-screen modals.
+## What changed this round
+- **Breakdown tab removed entirely** (By strategy, By entry model, By entry type, By attempt, By failure reason lists are gone). Stop-loss hunt stats already moved to Patterns in the previous update and remain there.
+- **By day** tab moved later in the default tab order (now sits just before Trade Log). Drag-to-reorder still works exactly as before if you want it elsewhere.
+- **Stop-loss hunts** moved from the Breakdown tab into the Patterns tab.
+- **New "Faults" tab** — scans every trade note for phrases linked to common self-sabotage (chased entry, forced trade, revenge trade, wrong intention, delusional, etc.), shows a flagged/clean breakdown, lets you filter trades by flag status, and lets you add/remove the detection phrases yourself.
 
-Both were already pointed at the same Supabase login and data — that part never needed merging. This change only consolidates the *deployment*, not the storage.
+## About the Faults tab — what it actually is
+This is **not AI**. It's a plain case-insensitive phrase search against a list you control — no language model, no real understanding of context, no API calls, $0 cost. A note containing "tried to anticipate" gets flagged the same way whether that was a genuine mistake or an offhand remark. Treat flags as "worth rereading," not as a verdict. You can freely add your own trigger phrases (e.g. ones from your own recurring habits) or delete any that produce noise.
 
-## Cleaning up the old duplicate Vercel projects
-If you haven't already:
-1. Go to vercel.com → open each extra project you no longer need.
-2. Settings → scroll to the bottom → **Delete Project** → confirm.
-3. Keep only the one project that will now serve this unified `index.html`. Update its repo connection (or just push this file to whichever repo it's already watching) and redeploy.
+## Deploy
+- **Vercel**: push to GitHub, import at vercel.com/new, no config needed.
+- **GitHub Pages**: Settings → Pages → Deploy from branch → main / root.
 
-## One-time Supabase setup (only ever needs to happen once, regardless of deployments)
+## One-time Supabase setup (only once total)
 1. SQL Editor → run `supabase_setup.sql`.
 2. SQL Editor → run `supabase_auth_migration.sql`.
 3. Authentication → Users → Add user (check "Auto Confirm User").
 
-## Deploy
-- **Vercel**: push to GitHub, import at vercel.com/new (or redeploy your existing project), no config needed — Root Directory stays at the repo root.
-- **GitHub Pages**: Settings → Pages → Deploy from branch → main / root.
+## Linking trades to multiple accounts
+The "Linked account" field on each trade is now a multi-select — pick 2, 3, or more of your named accounts on a single trade if you took the same idea across multiple accounts. Each selected account gets its own $ P&L input, since lot sizes/risk often differ by account. Account balances and profit/loss ratios are calculated using each account's own entered amount, not a shared total. Old trades with a single linked account migrate automatically — nothing is lost.
+
+## Sim Lab equity chart — fixed reference lines + breach alerts
+The Sim Lab equity curve now shows three flat reference lines: 0R (grey, dashed), -10R floor (red), and 100R ceiling (green), with your actual cumulative R drawn as a distinct solid line on top. The scale auto-expands if your real performance goes beyond -10R or 100R — it never compresses tighter than that range, just stretches further if needed.
+
+The first time your cumulative R crosses below -10R or above 100R, you get an amber ⚠️ alert (a popup plus a banner above the chart that stays until dismissed). It won't spam you again while you remain in breach — only fires again if you recover back across the line and then breach it a second time.
+
+## Confluences vs. Entry Model — now two separate fields
+These used to be merged into one field labeled "Confluences" but backed by what was originally meant to be "Entry Model" data. They're now genuinely separate, compact, side-by-side tag pickers on the trade form, each with its own color (amber for Entry Model, blue for Confluences) and their own saved tag lists. Old trades' existing tags were carried forward into Confluences (since that's what they functionally were), leaving Entry Model empty for fresh, correct tagging going forward.
+
+## Deleting wrong tags permanently
+Open any tag dropdown (Strategy, Entry Model, Confluences, or Failure Reason) and hover an option — a small trash icon appears. Clicking it permanently removes that tag from your saved list (with a confirmation), so wrong/junk tags don't keep cluttering the picker. This doesn't touch tags already saved on existing trades, only the picker list itself.
+
+## Expandable notes in Table and Grid views
+Every trade row/card with a note now shows a small "Text note ▼" toggle. Tap it to expand the full note inline without leaving the table/grid view or opening the edit modal — tap again to collapse.
+
+## New Daily Analysis tab
+Pick any specific calendar date (date picker + back/forward arrows) and see: that day's win rate and net R, a trade-by-trade mini chart where each line segment is colored by whether the trade it leads into was a win (green), loss (red), or breakeven (amber), and every note written that day laid out in trade order — so you can see exactly which trade/analysis produced the win R and which produced the loss R, at a glance.
+
+## Weekly review checklist (Daily Analysis tab)
+Below the daily notes view, a running list of weeks (Mon-Sun) each with 7 checkboxes — tick a day off once you've actually reviewed its trades. The current week always shows at the top; once all 7 days in a week are checked, that week's card is marked "✓ Reviewed" and visually fades slightly, but it never disappears — past weeks stay visible so you can see your review streak over time. Future days within the current week are locked (can't check ahead). Syncs across devices like everything else.
