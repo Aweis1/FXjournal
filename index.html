@@ -231,7 +231,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .form-group { margin-bottom: 11px; }
 .form-group label { display: block; font-size: 11px; color: #6b6f80; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
 .form-group input, .form-group select, .form-group textarea { width: 100%; background: #232327; border: 1px solid #2a2d3a; border-radius: 8px; color: #eaeaec; font-size: 13.5px; padding: 9px 11px; font-family: inherit; }
-.form-group textarea { resize: vertical; min-height: 56px; }
+.form-group textarea { resize: vertical; min-height: 220px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .form-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .modal-actions { display: flex; gap: 8px; margin-top: 14px; }
@@ -320,6 +320,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .month-stat-val { font-size: 15px; font-weight: 600; }
 .month-stat-label { font-size: 9.5px; color: #6b6f80; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 2px; }
 
+.heatmap-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.heatmap-metric-toggle, .heatmap-dim-toggle { padding: 3px; }
 .heatmap-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .heatmap-grid { display: grid; gap: 4px; min-width: 460px; }
 .heatmap-cell { aspect-ratio: 1.4; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #cfd1dc; padding: 2px; }
@@ -532,6 +534,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, syste
 .bt-valid-card { background: #1e1e22; border: 1px solid #2e2e33; border-radius: 12px; padding: 13px; text-align: center; }
 .bt-valid-num { font-size: 24px; font-weight: 700; }
 .bt-valid-label { font-size: 10.5px; color: #6b6f80; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
+.bt-valid-sub { font-size: 10.5px; color: #9a9eb0; margin-top: 6px; }
 
 footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-top: 22px; }
 </style>
@@ -636,7 +639,7 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 
   <div class="tab-panel" id="panel-backtest">
-    <div class="section-label">Backtest progress</div>
+    <div class="section-label">📈 Backtest progress</div>
     <div class="progress-card">
       <div class="progress-head">
         <div class="progress-count" id="bt-progress-count"></div>
@@ -648,25 +651,18 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
       <div class="progress-bar-track"><div class="progress-bar-fill" id="bt-progress-fill"></div></div>
       <div class="progress-sub" id="bt-progress-sub"></div>
     </div>
-    <div class="section-label">Backtest account stats</div>
+    <div class="section-label">📊 Backtest account stats</div>
     <div class="stats-grid" id="bt-stats"></div>
-    <div class="section-label">Setup validity</div>
+    <div class="section-label">✅ Setup validity</div>
     <div class="bt-valid-grid" id="bt-valid-grid"></div>
-    <div class="section-label">Win % by week</div>
+    <div class="section-label">🧩 By entry model</div>
+    <div class="breakdown-list" id="bt-entrymodel-list"></div>
+    <div class="section-label">🔗 By confluences</div>
+    <div class="breakdown-list" id="bt-confluences-list"></div>
+    <div class="section-label">🗓️ Win % by week</div>
     <div id="bt-week-list"></div>
-    <div class="section-label">Backtest equity curve (R)</div>
+    <div class="section-label">📉 Backtest equity curve (R)</div>
     <div class="chart-card"><div class="chart-wrap"><canvas id="bt-equity-chart"></canvas></div></div>
-  </div>
-
-  <div class="tab-panel" id="panel-brief">
-    <div class="section-label">Select today</div>
-    <div class="daysel-row" id="daysel-row"></div>
-    <div class="section-label">Risk rating</div>
-    <div id="risk-card-wrap"></div>
-    <div class="section-label">Historical performance on this day</div>
-    <div class="stats-grid" id="brief-stats"></div>
-    <div class="section-label">Best strategies on this day</div>
-    <div class="breakdown-list" id="brief-strategies"></div>
   </div>
 
   <div class="tab-panel" id="panel-overview">
@@ -691,23 +687,24 @@ footer.credit { text-align: center; font-size: 10.5px; color: #34374a; margin-to
   </div>
 
   <div class="tab-panel" id="panel-heatmap">
-    <div class="section-label">Win rate by day &amp; strategy</div>
-    <div class="heatmap-wrap"><div id="heatmap-container"></div></div>
-    <div class="heatmap-legend">
-      <span>Lower</span>
-      <div class="legend-swatch" style="background:#1f2937"></div>
-      <div class="legend-swatch" style="background:#1f5e44"></div>
-      <div class="legend-swatch" style="background:#2a8a63"></div>
-      <div class="legend-swatch" style="background:#3fd189"></div>
-      <span>Higher win rate</span>
-    </div>
-  </div>
-
-  <div class="tab-panel" id="panel-byday">
-    <div class="section-label">Net R by day</div>
+    <div class="section-label">🗓️ Net R by day of week</div>
     <div class="chart-card"><div class="chart-wrap"><canvas id="day-chart"></canvas></div></div>
-    <div class="section-label">Day breakdown</div>
     <div class="day-list" id="day-list"></div>
+
+    <div class="section-label">🔥 Heatmap</div>
+    <div class="heatmap-controls">
+      <div class="account-toggle heatmap-metric-toggle">
+        <button class="account-toggle-btn active" data-metric="winrate" onclick="setHeatmapMetric('winrate')">Win %</button>
+        <button class="account-toggle-btn" data-metric="netr" onclick="setHeatmapMetric('netr')">Net R</button>
+      </div>
+      <div class="account-toggle heatmap-dim-toggle">
+        <button class="account-toggle-btn active" data-dim="strategyTags" onclick="setHeatmapDimension('strategyTags')">Strategy</button>
+        <button class="account-toggle-btn" data-dim="entryModelTags" onclick="setHeatmapDimension('entryModelTags')">Entry model</button>
+        <button class="account-toggle-btn" data-dim="confluenceTags" onclick="setHeatmapDimension('confluenceTags')">Confluences</button>
+      </div>
+    </div>
+    <div class="heatmap-wrap"><div id="heatmap-container"></div></div>
+    <div class="heatmap-legend" id="heatmap-legend"></div>
   </div>
 
   <div class="tab-panel" id="panel-patterns">
@@ -1322,7 +1319,6 @@ let expandedId = null;
 let equityChart=null, dayChart=null, weekChart=null, simEquityChart=null, btEquityChart=null;
 let newsWeekOnly = false;
 let overviewAccount = 'all';
-let briefDay = new Date().getDay() >= 1 && new Date().getDay() <= 5 ? DAYS[new Date().getDay() - 1] : 'Monday';
 let mantraState = { date: null, checked: {}, items: null, nextMantraId: 1 };
 const DEFAULT_MANTRA_ITEMS = [
   { id: 1, text: 'Wait for your setup to fully confirm before re-entering after a loss.' },
@@ -1331,6 +1327,26 @@ const DEFAULT_MANTRA_ITEMS = [
   { id: 4, text: 'If trading to "prove the market wrong" or from ego, step away.' },
   { id: 5, text: 'Risk a fixed, predefined amount per trade. No exceptions.' }
 ];
+
+// Pre-trade analysis template — pre-filled into the Note field for
+// every NEW trade so the same checklist gets walked through each time.
+// Not applied when editing an existing trade (its real note shows instead).
+const NOTE_TEMPLATE = `A: Daily for direction ( )
+B: H4 + H1 for market structure — which phase ( )
+C: M15-M5 for condition ( )
+
+1. Which session, and is there a medium inducement (reversal)?
+2. What liquidity phase are you using?
+3. Is there any inducement / retail invitation?
+4. Is there an external zone nearby ( )?
+5. Are you in a premium or discount on H4 ( )?
+6. Is price close to your decisional level ( )?
+
+Confluences x Entry models:
+I:
+II:
+III:
+IV:`;
 
 let savedTags = {
   strategy: ['Breakout', 'Reversal', 'Continuation', 'Valid setup', 'Invalid setup'],
@@ -1388,7 +1404,6 @@ const TAB_DEFS = {
   accounts:  { label: 'Accounts',    icon: 'ti-building-bank' },
   simlab:    { label: 'Sim lab',     icon: 'ti-flask' },
   backtest:  { label: 'Backtest',    icon: 'ti-history' },
-  brief:     { label: 'Daily brief', icon: 'ti-sun' },
   overview:  { label: 'Overview',    icon: 'ti-layout-dashboard' },
   timeline:  { label: 'Timeline',    icon: 'ti-calendar-stats' },
   heatmap:   { label: 'Heatmap',     icon: 'ti-grid-dots' },
@@ -1396,7 +1411,6 @@ const TAB_DEFS = {
   faults:    { label: 'Faults',      icon: 'ti-flag-exclamation' },
   dailyanalysis: { label: 'Daily analysis', icon: 'ti-notebook' },
   mantra:    { label: 'Mantra',      icon: 'ti-checklist' },
-  byday:     { label: 'By day',      icon: 'ti-calendar-week' },
   log:       { label: 'Trade log',   icon: 'ti-list-details' }
 };
 let tabOrder = Object.keys(TAB_DEFS);
@@ -1463,7 +1477,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
   if (tab === 'overview') renderEquityChart();
-  if (tab === 'byday') renderDayChart();
+  if (tab === 'heatmap') { renderDayChart(); renderHeatmap(); }
   if (tab === 'timeline') renderWeekChart();
   if (tab === 'simlab') { renderProgressBar('sim'); renderSimEquityChart(); }
   if (tab === 'backtest') { renderProgressBar('backtest'); renderBacktestTab(); }
@@ -2179,32 +2193,6 @@ function renderFindings() {
   document.getElementById('findings-list').innerHTML = findings.slice(0,6).map(f => `<div class="finding-card"><div class="finding-icon icon-${f.color}"><i class="ti ${f.icon}" aria-hidden="true"></i></div><div class="finding-text">${f.text}</div></div>`).join('');
 }
 
-function renderDaySelector() { document.getElementById('daysel-row').innerHTML = DAYS.map(d=>`<button class="daysel-btn ${d===briefDay?'active':''}" onclick="setBriefDay('${d}')">${d.slice(0,3)}</button>`).join(''); }
-function setBriefDay(d) { briefDay = d; renderDaySelector(); renderBrief(); }
-
-function calcRisk(dayStats) {
-  if (dayStats.total===0) return { level:'medium', reason:'No historical data for this day yet — trade your normal size.' };
-  if (dayStats.winRate<50 || dayStats.netR<0) return { level:'high', reason:`${dayStats.day} has a ${dayStats.winRate.toFixed(0)}% win rate and ${dayStats.netR>=0?'+':''}${dayStats.netR.toFixed(2)}R net historically — consider reducing size or sitting out.` };
-  if (dayStats.winRate>=60 && dayStats.netR>0) return { level:'low', reason:`${dayStats.day} has historically been strong: ${dayStats.winRate.toFixed(0)}% win rate, ${dayStats.netR>=0?'+':''}${dayStats.netR.toFixed(2)}R net.` };
-  return { level:'medium', reason:`${dayStats.day} is roughly break-even historically: ${dayStats.winRate.toFixed(0)}% win rate, ${dayStats.netR>=0?'+':''}${dayStats.netR.toFixed(2)}R net. Trade with normal caution.` };
-}
-
-function renderBrief() {
-  const list = activeTrades();
-  const dayTrades = list.filter(t=>t.day===briefDay);
-  const s = calcStatsFor(dayTrades); s.day = briefDay;
-  const risk = calcRisk(s);
-  document.getElementById('risk-card-wrap').innerHTML = `<div class="risk-card risk-${risk.level}">
-    <div class="risk-icon"><i class="ti ${risk.level==='low'?'ti-shield-check':risk.level==='high'?'ti-alert-triangle':'ti-shield-half-filled'}" aria-hidden="true"></i></div>
-    <div><div class="risk-title">${risk.level.charAt(0).toUpperCase()+risk.level.slice(1)} risk</div><div class="risk-sub">${risk.reason}</div></div></div>`;
-  const sign = s.netR>=0?'+':'';
-  document.getElementById('brief-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Trades on ${briefDay}</div><div class="stat-value neutral">${s.total}</div></div>
-    <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-value blue">${s.winRate.toFixed(1)}%</div></div>
-    <div class="stat-card" style="grid-column:span 2"><div class="stat-label">Net R on ${briefDay}</div><div class="stat-value ${s.netR>=0?'green':'red'}">${sign}${s.netR.toFixed(2)}R</div></div>`;
-  renderBreakdownList('brief-strategies', groupByTagField('strategyTags', dayTrades));
-}
-
 function renderMonthList() {
   const list = activeTrades(); const groups = {};
   list.forEach(t => { const k=getMonthKey(t.date); if(!groups[k]) groups[k]=[]; groups[k].push(t); });
@@ -2237,28 +2225,79 @@ function renderWeekChart() {
       scales:{ x:{ grid:{display:false}, ticks:{ color:'#6b6f80', font:{size:9} } }, y:{ grid:{color:'#2c2c30'}, ticks:{ color:'#6b6f80', font:{size:9.5}, callback:(v)=>v+'R' } } } } });
 }
 
+let heatmapMetric = 'winrate'; // 'winrate' | 'netr'
+let heatmapDimension = 'strategyTags'; // 'strategyTags' | 'entryModelTags' | 'confluenceTags'
+
+function setHeatmapMetric(metric) {
+  heatmapMetric = metric;
+  document.querySelectorAll('.heatmap-metric-toggle .account-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.metric === metric));
+  renderHeatmap();
+}
+function setHeatmapDimension(dim) {
+  heatmapDimension = dim;
+  document.querySelectorAll('.heatmap-dim-toggle .account-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.dim === dim));
+  renderHeatmap();
+}
+
 function renderHeatmap() {
   const list = activeTrades();
-  const strategies = [...new Set(list.flatMap(t => t.strategyTags && t.strategyTags.length ? t.strategyTags : ['Untagged']))];
+  const tags = [...new Set(list.flatMap(t => (t[heatmapDimension] && t[heatmapDimension].length) ? t[heatmapDimension] : ['Untagged']))];
   const container = document.getElementById('heatmap-container');
-  if (!strategies.length) { container.innerHTML = '<div class="empty-msg">No trades yet</div>'; return; }
-  let html = `<div class="heatmap-grid" style="grid-template-columns: 70px repeat(${strategies.length}, 1fr);"><div></div>`;
-  strategies.forEach(s => { html += `<div class="heatmap-header">${s}</div>`; });
+  if (!tags.length) { container.innerHTML = '<div class="empty-msg">No trades yet</div>'; document.getElementById('heatmap-legend').innerHTML = ''; return; }
+
+  let html = `<div class="heatmap-grid" style="grid-template-columns: 70px repeat(${tags.length}, 1fr);"><div></div>`;
+  tags.forEach(s => { html += `<div class="heatmap-header">${s}</div>`; });
+
+  // Net R coloring needs the actual range present in the data; win% is always 0-100.
+  let maxAbsR = 1;
+  if (heatmapMetric === 'netr') {
+    DAYS.forEach(day => tags.forEach(tag => {
+      const cell = list.filter(t => t.day===day && (t[heatmapDimension]&&t[heatmapDimension].length?t[heatmapDimension]:['Untagged']).includes(tag));
+      if (cell.length) { const netR = cell.reduce((s,t)=>s+t.r,0); maxAbsR = Math.max(maxAbsR, Math.abs(netR)); }
+    }));
+  }
+
   DAYS.forEach(day => {
     html += `<div class="heatmap-rowlabel">${day.slice(0,3)}</div>`;
-    strategies.forEach(strat => {
-      const cell = list.filter(t => t.day===day && (t.strategyTags && t.strategyTags.length ? t.strategyTags : ['Untagged']).includes(strat));
-      if (!cell.length) { html += `<div class="heatmap-cell" style="background:#161822; color:#3a3d4a;">—</div>`; }
-      else {
+    tags.forEach(tag => {
+      const cell = list.filter(t => t.day===day && (t[heatmapDimension] && t[heatmapDimension].length ? t[heatmapDimension] : ['Untagged']).includes(tag));
+      if (!cell.length) { html += `<div class="heatmap-cell" style="background:#161822; color:#3a3d4a;">—</div>`; return; }
+
+      if (heatmapMetric === 'winrate') {
         const wins = cell.filter(t=>t.result==='tp').length; const wr = (wins/cell.length)*100;
         const bg = wr>=75?'#3fd189':wr>=50?'#2a8a63':wr>=25?'#1f5e44':'#1f2937';
         const textColor = wr>=50?'#0a2018':'#d0d2dc';
         html += `<div class="heatmap-cell" style="background:${bg}; color:${textColor};"><div style="font-weight:600;">${wr.toFixed(0)}%</div><div style="font-size:9px; opacity:0.8;">${cell.length}t</div></div>`;
+      } else {
+        const netR = cell.reduce((s,t)=>s+t.r,0);
+        const intensity = Math.min(1, Math.abs(netR) / maxAbsR);
+        const bg = netR >= 0
+          ? `rgba(52,226,154,${0.18 + intensity*0.62})`
+          : `rgba(255,107,102,${0.18 + intensity*0.62})`;
+        const textColor = intensity > 0.45 ? '#0a1410' : '#d0d2dc';
+        const sign = netR >= 0 ? '+' : '';
+        html += `<div class="heatmap-cell" style="background:${bg}; color:${textColor};"><div style="font-weight:600;">${sign}${netR.toFixed(1)}R</div><div style="font-size:9px; opacity:0.8;">${cell.length}t</div></div>`;
       }
     });
   });
   html += `</div>`;
   container.innerHTML = html;
+
+  const legend = document.getElementById('heatmap-legend');
+  if (heatmapMetric === 'winrate') {
+    legend.innerHTML = `<span>Lower</span>
+      <div class="legend-swatch" style="background:#1f2937"></div>
+      <div class="legend-swatch" style="background:#1f5e44"></div>
+      <div class="legend-swatch" style="background:#2a8a63"></div>
+      <div class="legend-swatch" style="background:#3fd189"></div>
+      <span>Higher win rate</span>`;
+  } else {
+    legend.innerHTML = `<span>Losing</span>
+      <div class="legend-swatch" style="background:rgba(255,107,102,0.7)"></div>
+      <div class="legend-swatch" style="background:#24242a"></div>
+      <div class="legend-swatch" style="background:rgba(52,226,154,0.7)"></div>
+      <span>Winning (net R)</span>`;
+  }
 }
 
 function renderMantra() {
@@ -2477,6 +2516,10 @@ function renderSimLab() {
 }
 
 /* --- BACKTEST TAB --- */
+const BT_WEEKS_COLLAPSED_COUNT = 6;
+let btWeeksExpanded = false;
+function toggleBtWeeksExpanded() { btWeeksExpanded = !btWeeksExpanded; renderBacktestTab(); }
+
 function renderBacktestTab() {
   const list = backtestTrades();
   const s = calcStatsFor(list);
@@ -2489,17 +2532,31 @@ function renderBacktestTab() {
 
   const valid = list.filter(t => (t.strategyTags||[]).includes('Valid setup'));
   const invalid = list.filter(t => (t.strategyTags||[]).includes('Invalid setup'));
+  const validStats = calcStatsFor(valid);
+  const invalidStats = calcStatsFor(invalid);
   document.getElementById('bt-valid-grid').innerHTML = `
-    <div class="bt-valid-card"><div class="bt-valid-num green">${valid.length}</div><div class="bt-valid-label">Valid setups</div></div>
-    <div class="bt-valid-card"><div class="bt-valid-num red">${invalid.length}</div><div class="bt-valid-label">Invalid setups</div></div>`;
+    <div class="bt-valid-card">
+      <div class="bt-valid-num green">${valid.length}</div>
+      <div class="bt-valid-label">Valid setups</div>
+      ${valid.length ? `<div class="bt-valid-sub">${validStats.winRate.toFixed(0)}% win · ${validStats.netR>=0?'+':''}${validStats.netR.toFixed(2)}R</div>` : ''}
+    </div>
+    <div class="bt-valid-card">
+      <div class="bt-valid-num red">${invalid.length}</div>
+      <div class="bt-valid-label">Invalid setups</div>
+      ${invalid.length ? `<div class="bt-valid-sub">${invalidStats.winRate.toFixed(0)}% win · ${invalidStats.netR>=0?'+':''}${invalidStats.netR.toFixed(2)}R</div>` : ''}
+    </div>`;
+
+  renderBreakdownList('bt-entrymodel-list', groupByTagField('entryModelTags', list));
+  renderBreakdownList('bt-confluences-list', groupByTagField('confluenceTags', list));
 
   const groups = {};
   list.forEach(t => { const k = getWeekKey(t.date); if (!groups[k]) groups[k] = []; groups[k].push(t); });
-  const keys = Object.keys(groups).sort();
+  const keys = Object.keys(groups).sort().reverse(); // newest week first
   const el = document.getElementById('bt-week-list');
   if (!keys.length) { el.innerHTML = '<div class="empty-msg">No backtest trades logged yet</div>'; }
   else {
-    el.innerHTML = keys.map(k => {
+    const visibleKeys = btWeeksExpanded ? keys : keys.slice(0, BT_WEEKS_COLLAPSED_COUNT);
+    el.innerHTML = visibleKeys.map(k => {
       const wlist = groups[k];
       const wins = wlist.filter(t=>t.result==='tp').length;
       const losses = wlist.filter(t=>t.result==='sl').length;
@@ -2517,7 +2574,10 @@ function renderBacktestTab() {
           <span style="color:${netR>=0?'#4fd394':'#e0625f'}"><b>${netR>=0?'+':''}${netR.toFixed(2)}R</b></span>
         </div>
       </div>`;
-    }).join('');
+    }).join('') + (keys.length > BT_WEEKS_COLLAPSED_COUNT ? `
+      <button class="add-account-btn" onclick="toggleBtWeeksExpanded()" style="margin-top:4px;">
+        ${btWeeksExpanded ? '<i class="ti ti-chevron-up" aria-hidden="true"></i> Show fewer weeks' : `<i class="ti ti-chevron-down" aria-hidden="true"></i> Show all ${keys.length} weeks`}
+      </button>` : '');
   }
   renderBtEquityChart();
 }
@@ -2910,7 +2970,7 @@ function showCalDayTrades(dateStr) {
 
 function render() {
   renderStats(); renderEquityChart(); renderDayChart(); renderDayList(); renderBreakdownTab(); renderFindings();
-  renderDaySelector(); renderBrief(); renderMonthList(); renderWeekChart(); renderHeatmap(); renderMantra();
+  renderMonthList(); renderWeekChart(); renderHeatmap(); renderMantra();
   renderTrades(); renderSimLab(); renderProgressBar('sim'); renderProgressBar('backtest'); renderSimEquityChart(); renderBacktestTab();
   renderAccountsTab(); renderFaultsTab(); renderDailyAnalysisTab();
 }
@@ -3045,7 +3105,7 @@ function openModal() {
   document.getElementById('f-entrytype').value = 'Conservative';
   document.getElementById('f-attempt').value = '1st';
   document.getElementById('f-newsweek').checked = false;
-  document.getElementById('f-note').value = '';
+  document.getElementById('f-note').value = NOTE_TEMPLATE;
   formSelected = { strategy: [], entrymodel: [], confluences: [], failtag: [] };
   formSlHunt = false;
   renderSelectedChips('strategy'); renderSelectedChips('entrymodel'); renderSelectedChips('confluences'); renderSelectedChips('failtag');

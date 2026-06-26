@@ -42,3 +42,27 @@ Pick any specific calendar date (date picker + back/forward arrows) and see: tha
 
 ## Weekly review checklist (Daily Analysis tab)
 Below the daily notes view, a running list of weeks (Mon-Sun) each with 7 checkboxes — tick a day off once you've actually reviewed its trades. The current week always shows at the top; once all 7 days in a week are checked, that week's card is marked "✓ Reviewed" and visually fades slightly, but it never disappears — past weeks stay visible so you can see your review streak over time. Future days within the current week are locked (can't check ahead). Syncs across devices like everything else.
+
+## Pre-trade analysis template (Note field)
+Every time you log a NEW trade, the Note field now pre-fills with a structured analysis template:
+- A/B/C: timeframe-by-timeframe breakdown (Daily direction, H4+H1 structure/phase, M15-M5 condition)
+- 6 checklist questions (session + medium inducement, liquidity phase, inducement/retail invitation, nearby external zone, premium/discount on H4, proximity to your decisional level)
+- A Confluences x Entry Models section with 4 numbered slots to fill in
+
+Just edit the blanks before saving. Editing an *existing* trade still shows that trade's actual saved note, never the blank template — this only pre-fills when starting something new.
+
+## Backtest tab fixes
+- **Win % by week** now sorts newest-first (was oldest-first) and caps at 6 weeks by default with a "Show all N weeks" button, instead of growing unbounded as you log more backtests.
+- **Setup validity cards** (Valid/Invalid) now show win rate and net R underneath the count, not just a raw number.
+- **New breakdowns**: "By entry model" and "By confluences" — win rate and net R for each entry model/confluence tag, scoped to backtest trades only.
+- Section labels got emoji for visual consistency with the rest of the app.
+
+## Tab cleanup: Daily Brief and By Day removed
+Both tabs were thin/overlapping with other tabs (Daily Brief's risk rating and "best strategy on this day" duplicated what Heatmap and Patterns already covered). They're gone. By Day's net-R-by-weekday chart and day breakdown list weren't discarded — they moved into the top of the Heatmap tab, so that data still lives somewhere.
+
+## Heatmap, upgraded
+The heatmap tab now has two toggles:
+- **Win % / Net R** — switch the grid's metric. Net R mode colors cells green/red by how much R that day+tag combination actually made or lost, not just win rate.
+- **Strategy / Entry model / Confluences** — switch which tag dimension the grid breaks down by, so you can see win rate (or net R) by day × entry model, or day × confluence, not just day × strategy.
+
+Legend updates automatically to match whichever metric is selected.
