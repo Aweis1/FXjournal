@@ -1276,7 +1276,7 @@ async function autoSyncOnLogin() {
       applyFullState(merged);
       await pushSyncState();
     } else {
-      await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: localState });
+      await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: localState }, { onConflict: 'owner_id' });
     }
 
     syncConfig.lastSyncedAt = new Date().toISOString();
@@ -1298,7 +1298,7 @@ async function pushSyncState() {
   if (!supabaseClient || !currentUser || syncInFlight) return;
   syncInFlight = true;
   try {
-    await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: collectFullState() });
+    await supabaseClient.from('journal_sync').upsert({ owner_id: currentUser.id, data: collectFullState() }, { onConflict: 'owner_id' });
     syncConfig.lastSyncedAt = new Date().toISOString();
     persistSyncConfig();
   } catch (e) {
@@ -1315,13 +1315,19 @@ async function pushSyncState() {
 function queueCloudPush() {
   if (!supabaseClient || !currentUser) return;
   clearTimeout(syncPushTimer);
-  syncPushTimer = setTimeout(pushSyncState, 1200);
+  syncPushTimer = setTimeout(() => { syncPushTimer = null; pushSyncState(); }, 1200);
 }
 
 // Periodically pull from the cloud so edits made on another device
 // show up here without needing a manual refresh.
+// IMPORTANT: this must never fire while a local change is still
+// waiting to be pushed (queued in syncPushTimer) or is currently
+// being pushed (syncInFlight) — otherwise it can overwrite a brand
+// new local trade with an older cloud snapshot that hasn't seen it
+// yet, silently erasing it.
 async function pullSyncState() {
   if (!supabaseClient || !currentUser || syncInFlight) return;
+  if (syncPushTimer) return; // a local save is queued to push — don't pull until it's sent
   try {
     const { data, error } = await supabaseClient.from('journal_sync').select('data, updated_at').eq('owner_id', currentUser.id).maybeSingle();
     if (error) { showSyncErrorBanner('☁️ Could not check for updates from the cloud: ' + error.message); return; }

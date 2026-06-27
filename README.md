@@ -74,3 +74,15 @@ Fixed: empty local storage now just starts as a genuinely empty trade list. No f
 
 ## Visible sync error banner (no console needed)
 Cloud sync failures now show as a clear red banner right at the top of the app — no need to open developer tools or the browser console at all. If the cloud read/write fails for any reason (network issue, permissions, etc.), you'll see exactly what went wrong in plain text, with a dismiss button. This covers all three sync paths: initial load, saving a change, and the periodic background check for updates from other devices.
+
+## 🐛 Fixed: 409 conflict on every cloud save
+Found and fixed the root cause of the sync chain of bugs from this session. The app's `upsert()` calls never specified which column counts as a "conflict" for update-vs-insert purposes, so Supabase defaulted to checking the primary key (`sync_id`, which is always freshly auto-generated) instead of `owner_id` (which is what actually identifies your row). After adding a uniqueness constraint on `owner_id` to prevent duplicate rows, this mismatch caused every single save to be rejected with a 409 Conflict error, since each save looked like an attempt to insert a second row for the same user.
+
+Fixed by explicitly telling `upsert()` to treat `owner_id` as the conflict column. Saves and initial sync should now correctly update your one existing row instead of colliding with it.
+
+## 🐛 Fixed: race condition silently erasing brand-new trades
+Found and fixed the actual cause of trades disappearing shortly after being logged. The app polls the cloud for updates every 15 seconds in the background. If that poll happened to fire in the ~1.2 second window between saving a new trade and that trade actually finishing its push to the cloud, the poll would fetch the OLDER cloud snapshot (which didn't have the new trade yet) and directly overwrite local state with it — silently erasing the brand new trade from both local storage and, on the next save, from the cloud too.
+
+Fixed: the background poll now checks whether a local save is queued or actively pushing, and skips itself entirely if so, only ever pulling once it's certain the cloud is caught up with this device's latest changes. Also fixed a related bug where the "save pending" flag never reset after firing, which would have permanently blocked all future syncing after the first save.
+
+**This fix prevents the bug going forward — it cannot recover trades that were already silently overwritten before this fix was deployed.** If you logged trades this week that are now missing, they were caught by this exact race condition and were never durably saved in either local storage or the cloud by the time it triggered. There's no copy to restore from. Sorry — going forward this specific failure mode shouldn't recur.
