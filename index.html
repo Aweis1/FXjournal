@@ -1581,9 +1581,8 @@ async function loadTrades() {
       });
       nextId = data.nextId || (trades.length ? Math.max(...trades.map(t => t.id)) + 1 : 1);
     } else {
-      trades = seedBacktestTrades();
-      nextId = trades.length + 1;
-      persistTrades();
+      trades = [];
+      nextId = 1;
     }
     setSyncBadge('ok', 'Saved locally');
   } catch (e) { setSyncBadge('err', 'Storage error'); }

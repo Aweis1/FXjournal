@@ -66,3 +66,8 @@ The heatmap tab now has two toggles:
 - **Strategy / Entry model / Confluences** — switch which tag dimension the grid breaks down by, so you can see win rate (or net R) by day × entry model, or day × confluence, not just day × strategy.
 
 Legend updates automatically to match whichever metric is selected.
+
+## 🐛 Fixed: demo data overwriting real synced data
+Found and fixed a real bug. Previously, if local browser storage was empty when the app loaded (new device, cleared cache, etc.), it would seed fake demo backtest trades AND save/sync them immediately — before your real cloud data had a chance to load. The merge logic then treated those fake trades as legitimate local data worth keeping, polluting your real account permanently across every device.
+
+Fixed: empty local storage now just starts as a genuinely empty trade list. No fake data is ever created or saved. Cloud sync (on login) is now the only thing that populates a fresh device, exactly as it should have worked from the start. Your cloud data was never deleted by this bug — only mixed with junk — so existing accounts should clean up automatically the next time you log in on each device (the cloud copy stays the source of truth; any old demo trades can simply be deleted from the Trade Log if you spot them).
